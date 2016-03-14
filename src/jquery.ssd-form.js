@@ -13,11 +13,7 @@
 
         "use strict";
 
-        var settings = $.extend({
-
-            
-
-        }, options);
+        var settings = $.extend({}, options);
 
         var ErrorCollection = function() {
 
