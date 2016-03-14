@@ -1,0 +1,30 @@
+[data-validation] span,
+[data-validation] div {
+    color: #900 !important;
+}
+
+[data-validation] [data-case] {
+    display: none;
+}
+
+[data-validation] [data-case].show {
+    display: block;
+}
+
+[data-validation].display-inline [data-case].show  {
+    display: inline;
+}
+
+.confirmationMessage {
+    display: none;
+}
+
+input.invalid,
+select.invalid,
+textarea.invalid {
+    border-color: #900;
+}
+
+.hide {
+    display: none;
+}

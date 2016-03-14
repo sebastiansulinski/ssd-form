@@ -3,10 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>Examples</title>
+    <link href="./assets/css/foundation.min.css" rel="stylesheet">
+    <link href="./assets/css/ssd-form.css" rel="stylesheet">
+    <link href="./assets/css/app.css" rel="stylesheet">
 </head>
 <body>
 
+<div class="row">
 
+    <div class="large-6 medium-8 columns large-offset-3 medium-offset-2">
+
+
+
+
+
+        <div class="formWrapper">
+
+            <form
+                    method="post"
+                    action="./submit.php"
+                    data-ajax-form
+                    data-success-behaviour="fadeOutShowMessage"
+                    novalidate
+            >
+
+                <label for="first_name">
+                <span data-validation="first_name">
+                    <span data-case="required">Please provide your first name</span>
+                    <span data-case="min">Length must be at least 3 characters</span>
+                </span>
+                </label>
+
+                <input
+                        type="text"
+                        name="first_name"
+                        id="first_name"
+                        data-validate="required|min:3"
+                        placeholder="Your first name *"
+                >
+
+                <label for="last_name">
+                <span data-validation="last_name">
+                    <span data-case="required">Please provide your last name</span>
+                    <span data-case="min">Length must be at least 3 characters</span>
+                </span>
+                </label>
+
+                <input
+                        type="text"
+                        name="last_name"
+                        id="last_name"
+                        data-validate="required|min:3"
+                        placeholder="Your last name *"
+                >
+
+                <input
+                        type="submit"
+                        class="button"
+                        value="SEND ENQUIRY"
+                        data-submit-trigger
+                >
+                <button
+                        type="button"
+                        class="button hide"
+                        disabled
+                        data-submit-pending
+                >
+                    <i class="fa fa-spinner fa-spin"></i> PROCESSING
+                </button>
+
+            </form>
+
+            <p class="confirmationMessage"></p>
+
+        </div>
+
+
+
+
+
+    </div>
+
+</div>
 
 <script src="./node_modules/jquery/dist/jquery.min.js"></script>
 <script src="./src/jquery.ssd-form.js"></script>
