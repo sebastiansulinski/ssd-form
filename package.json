@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/sebastiansulinski/ssd-form/issues"
   },
-  "homepage": "https://github.com/sebastiansulinski/ssd-form#readme"
+  "homepage": "https://github.com/sebastiansulinski/ssd-form#readme",
+  "dependencies": {
+    "jquery": ">= 1.9"
+  }
 }
