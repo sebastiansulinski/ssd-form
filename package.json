@@ -1,0 +1,28 @@
+{
+  "name": "ssd-form",
+  "version": "1.0.0",
+  "description": "jQuery plugin to handle form validation and submission",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebastiansulinski/ssd-form.git"
+  },
+  "keywords": [
+    "jquery",
+    "form",
+    "validation",
+    "ajax",
+    "form",
+    "form",
+    "submission"
+  ],
+  "author": "Sebastian Sulinski <info@ssdtutorials.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sebastiansulinski/ssd-form/issues"
+  },
+  "homepage": "https://github.com/sebastiansulinski/ssd-form#readme"
+}
