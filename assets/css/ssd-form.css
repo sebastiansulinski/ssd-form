@@ -15,7 +15,8 @@
     display: inline;
 }
 
-.confirmationMessage {
+[data-confirmation],
+.hide {
     display: none;
 }
 
@@ -23,8 +24,4 @@ input.invalid,
 select.invalid,
 textarea.invalid {
     border-color: #900;
-}
-
-.hide {
-    display: none;
 }
