@@ -1,19 +1,38 @@
-
 /*
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2016 Sebastian Sulinski
- * Version: 1.0.0 (14-MAR-2016)
+ * Version: 1.0.0 (02-APR-2016)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
 ;(function(window, $, undefined) {
 
+    "use strict";
+
     $.fn.ssdForm = function (options) {
 
         "use strict";
 
-        var settings = $.extend({}, options);
+        var settings = $.extend({
+
+                dataFormWrapper: 'data-form-wrapper',
+                dataConfirmation: 'data-confirmation',
+                dataValidationSegment: 'data-validation',
+                dataValidationCase: 'data-case',
+                dataSubmitTrigger: 'data-submit-trigger',
+                dataSubmitPending: 'data-submit-pending',
+
+                classHide: 'hide',
+                classShow: 'show'
+
+            }, options),
+            formWrapper = '[' + settings.dataFormWrapper + ']',
+            formConfirmation = '[' + settings.dataConfirmation + ']',
+            formValidationSegment = '[' + settings.dataValidationSegment + ']',
+            formValidationCase = '[' + settings.dataValidationCase + ']',
+            formSubmitTrigger = '[' + settings.dataSubmitTrigger + ']',
+            formSubmitPending = '[' + settings.dataSubmitPending + ']';
 
         var ErrorCollection = function() {
 
@@ -350,8 +369,8 @@
 
                 Form.endRequest(form);
 
-                var formWrapper = form.instance().closest('.formWrapper'),
-                    messageWrapper = formWrapper.find('.confirmationMessage');
+                var formWrapper = form.instance().closest(formWrapper),
+                    messageWrapper = formWrapper.find(formConfirmation);
 
                 form.instance().fadeOut(200, function() {
 
@@ -368,8 +387,8 @@
 
                 Form.endRequest(form);
 
-                var formWrapper = form.instance().closest('.formWrapper'),
-                    messageWrapper = formWrapper.find('.confirmationMessage');
+                var formWrapper = form.instance().closest(formWrapper),
+                    messageWrapper = formWrapper.find(formConfirmation);
 
                 form.instance().fadeOut(200, function() {
 
@@ -394,8 +413,8 @@
 
                 Form.endRequest(form);
 
-                var formWrapper = form.instance().closest('.formWrapper'),
-                    messageWrapper = formWrapper.find('.confirmationMessage');
+                var formWrapper = form.instance().closest(formWrapper),
+                    messageWrapper = formWrapper.find(formConfirmation);
 
                 form.instance().fadeOut(200, function() {
 
@@ -553,7 +572,9 @@
 
                 "use strict";
 
-                form.instance().find('[data-validation] [data-case]').removeClass('show');
+                form.instance().find(
+                    formValidationSegment + ' ' + formValidationCase
+                ).removeClass(settings.classShow);
 
             },
 
@@ -569,6 +590,8 @@
 
                 "use strict";
 
+                var index;
+
                 for (var key in errors) {
 
                     if (errors.hasOwnProperty(key)) {
@@ -581,10 +604,15 @@
 
                         }
 
+                        index = $.isArray(errors[key]) ? errors[key][0] : errors[key];
+
                         form
                             .instance()
-                            .find('[data-validation="' + key + '"] [data-case="' + errors[key] + '"]')
-                            .addClass('show');
+                            .find(
+                                '[' + settings.dataValidationSegment + '="' + key + '"] ' +
+                                '[' + settings.dataValidationCase + '="' + index + '"]'
+                            )
+                            .addClass(settings.classShow);
 
                     }
 
@@ -600,8 +628,8 @@
                     return true;
                 }
 
-                form.instance().find('[data-submit-trigger]').addClass('hide');
-                form.instance().find('[data-submit-pending]').removeClass('hide');
+                form.instance().find(formSubmitTrigger).addClass(settings.classHide);
+                form.instance().find(formSubmitPending).removeClass(settings.classHide);
 
             },
 
@@ -613,8 +641,8 @@
                     return true;
                 }
 
-                form.instance().find('[data-submit-trigger]').removeClass('hide');
-                form.instance().find('[data-submit-pending]').addClass('hide');
+                form.instance().find(formSubmitTrigger).removeClass(settings.classHide);
+                form.instance().find(formSubmitPending).addClass(settings.classHide);
 
             },
 
@@ -752,7 +780,6 @@
         };
 
         return Form.init(this);
-
     };
 
 })(window, window.jQuery);
