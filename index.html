@@ -28,11 +28,31 @@
                     novalidate
             >
 
+                <label for="title">
+                    <span data-validation="title">
+                        <span data-case="required">Please select your title</span>
+                        <span data-case="value_is">Selected value must be Mr</span>
+                    </span>
+                </label>
+
+                <select
+                    name="title"
+                    id="title"
+                    data-validate="required|value_is:1"
+                    >
+                    <option value="">Select title</option>
+                    <option value="1">Mr</option>
+                    <option value="2">Mrs</option>
+                    <option value="3">Miss</option>
+                    <option value="4">Ms</option>
+                </select>
+
                 <label for="first_name">
-                <span data-validation="first_name">
-                    <span data-case="required">Please provide your first name</span>
-                    <span data-case="min">Length must be at least 3 characters</span>
-                </span>
+                    <span data-validation="first_name">
+                        <span data-case="required">Please provide your first name</span>
+                        <span data-case="min">Length must be at least 3 characters</span>
+                        <span data-case="response">Validation triggered by ajax response</span>
+                    </span>
                 </label>
 
                 <input
@@ -44,10 +64,10 @@
                 >
 
                 <label for="last_name">
-                <span data-validation="last_name">
-                    <span data-case="required">Please provide your last name</span>
-                    <span data-case="min">Length must be at least 3 characters</span>
-                </span>
+                    <span data-validation="last_name">
+                        <span data-case="required">Please provide your last name</span>
+                        <span data-case="min">Length must be at least 3 characters</span>
+                    </span>
                 </label>
 
                 <input
@@ -58,12 +78,33 @@
                         placeholder="Your last name *"
                 >
 
+                <label for="newsletter">
+                    <span data-validation="newsletter">
+                        <span data-case="checked">You must agree to our newsletter and conditions</span>
+                    </span>
+                </label>
+
+
+                <span data-validation="terms">
+                    <span data-case="checked">You must agree to our terms and conditions</span>
+                </span>
+
+                <label for="terms">
+                    <input
+                            type="checkbox"
+                            name="terms"
+                            id="terms"
+                            data-validate="checked"
+                    > I agree to the terms and conditions
+                </label>
+
                 <input
                         type="submit"
                         class="button"
                         value="SEND ENQUIRY"
                         data-submit-trigger
                 >
+
                 <button
                         type="button"
                         class="button hide"
