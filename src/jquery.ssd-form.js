@@ -404,7 +404,8 @@
 
                         setTimeout(function() {
 
-                            window.location.href = data.url;
+
+                            window.location.href = data.redirect;
 
                         }, 3000);
 
