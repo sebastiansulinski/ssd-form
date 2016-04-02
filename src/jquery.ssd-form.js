@@ -144,6 +144,14 @@
 
             },
 
+            value_is: function(element) {
+
+                "use strict";
+
+                return element.value == element.rules_collection;
+
+            },
+
             email: function(element) {
 
                 "use strict";
