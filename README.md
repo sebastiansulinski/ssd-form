@@ -1,4 +1,1 @@
-# ssd-form
-jQuery plugin to handle form validation and submission
-
-## UNDER DEVELOPMENT - NOT READY FOR USE IN PRODUCTION
+# Simple form validation / submission jQuery plugin
