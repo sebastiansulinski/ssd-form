@@ -6,9 +6,7 @@
 npm i ssd-form
 ```
 
-## Usage example
-
-Form
+## Set up
 
 ```
 <div data-form-wrapper>
@@ -112,6 +110,12 @@ Form
     <p data-confirmation></p>
 
 </div>
+```
+
+Include the necessary styles for the plugin to work
+
+```
+<link href="assets/css/ssd-form.css" rel="stylesheet">
 ```
 
 To instantiate the form simply call it on the form

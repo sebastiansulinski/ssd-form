@@ -19,24 +19,3 @@
 .hide {
     display: none;
 }
-
-input.invalid,
-select.invalid,
-textarea.invalid {
-    border-color: #900;
-}
-
-.inline-list {
-    list-style: none;
-    margin: 0 0 1.25rem;
-    padding: 0;
-}
-
-.inline-list li {
-    display: inline-block;
-    margin-right: 0.5rem;
-}
-
-.inline-list li input {
-    margin-right: 0.35rem;
-}
