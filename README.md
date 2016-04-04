@@ -12,11 +12,11 @@ npm i ssd-form
 <div data-form-wrapper>
 
     <form
-        method="post"
-        action="./submit.php"
-        data-ajax-form
-        data-success-behaviour="fadeOutShowMessage"
-        novalidate
+            method="post"
+            action="./submit.php"
+            data-ajax-form
+            data-success-behaviour="fadeOutShowMessage"
+            novalidate
     >
 
         <label for="title">
@@ -47,11 +47,11 @@ npm i ssd-form
         </label>
 
         <input
-            type="text"
-            name="first_name"
-            id="first_name"
-            data-validate="required|min:3"
-            placeholder="Your first name *"
+                type="text"
+                name="first_name"
+                id="first_name"
+                data-validate="required|min:3"
+                placeholder="Your first name *"
         >
 
         <label for="last_name">
@@ -62,45 +62,86 @@ npm i ssd-form
         </label>
 
         <input
-            type="text"
-            name="last_name"
-            id="last_name"
-            data-validate="required|min:3"
-            placeholder="Your last name *"
+                type="text"
+                name="last_name"
+                id="last_name"
+                data-validate="required|min:3"
+                placeholder="Your last name *"
         >
 
-        <label for="newsletter">
-            <span data-validation="newsletter">
+        <label for="email">
+            <span data-validation="email">
+                <span data-case="required">Please provide your email address</span>
+                <span data-case="email">Invalid email address</span>
+            </span>
+        </label>
+
+        <input
+                type="email"
+                name="email"
+                id="email"
+                data-validate="required|email"
+                placeholder="Your email address *"
+        >
+
+        <label for="password">
+            <span data-validation="password">
+                <span data-case="required">Please choose your password</span>
+                <span data-case="password">Length must be at least 6 characters, one capital letter and one number</span>
+                <span data-case="confirmed">Passwords do not match</span>
+            </span>
+        </label>
+
+        <input
+                type="password"
+                name="password"
+                id="password"
+                data-validate="required|password|confirmed"
+                placeholder="Password"
+        >
+
+        <label for="password_confirmation">
+            <span data-validation="password_confirmation">
+                <span data-case="required">Please confirm your password</span>
+                <span data-case="min">Length must be at least 5 characters</span>
+            </span>
+        </label>
+
+        <input
+                type="password"
+                name="password_confirmation"
+                id="password_confirmation"
+                data-validate="required|password"
+                placeholder="Password"
+        >
+
+        <label>
+            <span data-validation="terms">
                 <span data-case="checked">You must agree to our newsletter and conditions</span>
             </span>
         </label>
 
-
-        <span data-validation="terms">
-            <span data-case="checked">You must agree to our terms and conditions</span>
-        </span>
-
         <label for="terms">
             <input
-                type="checkbox"
-                name="terms"
-                id="terms"
-                data-validate="checked"
+                    type="checkbox"
+                    name="terms"
+                    id="terms"
+                    data-validate="checked"
             > I agree to the terms and conditions
         </label>
 
         <input
-            type="submit"
-            class="button"
-            value="SEND ENQUIRY"
-            data-submit-trigger
+                type="submit"
+                class="button"
+                value="SEND ENQUIRY"
+                data-submit-trigger
         >
 
         <button
-            type="button"
-            class="button hide"
-            disabled
-            data-submit-pending
+                type="button"
+                class="button hide"
+                disabled
+                data-submit-pending
         >
             <i class="fa fa-spinner fa-spin"></i> PROCESSING
         </button>
