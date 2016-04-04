@@ -1,5 +1,9 @@
 # Simple form validation / submission jQuery plugin
 
+## Demo
+
+[SSD Form Demo](http://ssd-form.ssdtutorials.com/)
+
 ## Installation
 
 ```
