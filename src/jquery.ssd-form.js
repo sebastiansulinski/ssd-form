@@ -24,7 +24,10 @@
                 dataSubmitPending: 'data-submit-pending',
 
                 classHide: 'hide',
-                classShow: 'show'
+                classShow: 'show',
+
+                extendBehaviours: {},
+                extendValidationRules: {}
 
             }, options),
             formWrapper = '[' + settings.dataFormWrapper + ']',
@@ -120,7 +123,7 @@
 
         };
 
-        var ValidatorRule = {
+        var ValidatorRule = $.extend({
 
             elements: [],
 
@@ -235,7 +238,7 @@
 
             }
 
-        };
+        }, settings.extendValidationRules);
 
         var Validator = function(form, error) {
 
@@ -349,7 +352,7 @@
 
         };
 
-        var FormBehaviour = {
+        var FormBehaviour = $.extend({
 
             redirect: function(form, data) {
 
@@ -479,7 +482,9 @@
 
             }
 
-        };
+        }, settings.extendBehaviours);
+
+
 
         var FormModel = function(form) {
 

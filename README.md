@@ -153,7 +153,13 @@ dataSubmitPending: 'data-submit-pending',
 classHide: 'hide',
 
 // class that shows validation case
-classShow: 'show'
+classShow: 'show',
+
+// allows you to add more behaviours
+extendBehaviours: {},
+
+// allows you to add more validation rules
+extendValidationRules: {}
 ```
 
 ## Validation
@@ -169,7 +175,7 @@ data-validate="required|min:3"
 - `required` : input must have a value
 - `checked` : input must be checked
 - `value_is:n` : input value must equal `n` (`value:10` would mean that value must equal 10)
-- `email` : input value must be a valid email address
+- `email` : input value must be a valid email address - regex /^[a-zA-Z0-9._\-]+@[a-zA-Z0-9]+([.\-]?[a-zA-Z0-9]+)?([\.]{1}[a-zA-Z]{2,4}){1,4}$/
 - `password` : input value must match the following regex `/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/`
 - `min:n` : input value's length must be minumum of `n` characters (`min:10` would mean that the value has to be at least 10 characters long)
 - `max:n` : input value's length must be maximum of `n` characters (`max:10` would mean that the value has to be maximum 10 characters long)
@@ -201,3 +207,88 @@ Once the form has been processed successfully it will trigger one of the followi
 - `reload` : reloads the page
 - `fadeOutShowMessage` : fades out the form and displays the message in its place. Response has to contain `message` entry `{ "message" : "Your request has been processed successfully." }`
 - `fadeOutShowMessageRedirect` : fades out the form, displays the message and after 3 seconds redirects to a given url/i. Response needs to contain `message` and `redirect` entry `{ "message" : "Your request has been processed successfully.", "redirect" : "/confirmation" }`
+
+## Extending validation rules and form behaviours
+
+If you'd like to add more validation rules, use the `extendValidationRules` option, which will extend the internal `ValidationRules` object. Each new method takes the `element` argument. `element.rules_collection` represents any value that's after the rules colon i.e. `min:5` would return `5`, `something:5,6,7` would return `5,6,7`:
+
+```
+$('form[data-ajax-form]').ssdForm({
+
+    extendValidationRules: {
+
+        number_is: function(element) {
+
+            return Number(element.value) === Number(element.rules_collection);
+
+        }
+
+    }
+
+});
+
+<input
+    type="text"
+    name="year"
+    id="year"
+    data-validate="required|number_is:2016"
+    placeholder="Provide current year"
+>
+```
+
+Other options available on the `element` object:
+
+```
+// instance of the input
+instance,
+
+// name attribute
+name,
+
+// type attribute
+type,
+
+// value of the input
+value,
+
+// validation rules associated with the data-validate attribute
+rules: obj.data('validate'),
+
+// returns true if checkbox / radio button is checked
+isChecked,
+
+// returns true if given input is visible / not hidden
+isVisible,
+
+// returns true if given input has class 'editor' associated with it
+// this option is useful if you're using wysiwyg editor etc.
+isEditor
+```
+
+For behaviours you do the same with `extendBehaviours` option, methods which take two arguments `form` (instance of the `FormModel` object) and `data` (ajax json response):
+
+```
+$('form[data-ajax-form]').ssdForm({
+
+    extendBehaviours: {
+
+        alertMessage: function(form, data) {
+
+            alert(data.message);
+
+        }
+
+    }
+
+});
+
+<form
+    method="post"
+    action="./submit.php"
+    data-ajax-form
+    data-success-behaviour="alertMessage"
+    novalidate
+>
+...
+</form>
+```

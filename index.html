@@ -78,16 +78,57 @@
                         placeholder="Your last name *"
                 >
 
-                <label for="newsletter">
-                    <span data-validation="newsletter">
-                        <span data-case="checked">You must agree to our newsletter and conditions</span>
+                <label for="email">
+                    <span data-validation="email">
+                        <span data-case="required">Please provide your email address</span>
+                        <span data-case="email">Invalid email address</span>
                     </span>
                 </label>
 
+                <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        data-validate="required|email"
+                        placeholder="Your email address *"
+                >
 
-                <span data-validation="terms">
-                    <span data-case="checked">You must agree to our terms and conditions</span>
-                </span>
+                <label for="password">
+                    <span data-validation="password">
+                        <span data-case="required">Please choose your password</span>
+                        <span data-case="password">Length must be at least 6 characters, one capital letter and one number</span>
+                        <span data-case="confirmed">Passwords do not match</span>
+                    </span>
+                </label>
+
+                <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        data-validate="required|password|confirmed"
+                        placeholder="Password"
+                >
+
+                <label for="password_confirmation">
+                    <span data-validation="password_confirmation">
+                        <span data-case="required">Please confirm your password</span>
+                        <span data-case="min">Length must be at least 5 characters</span>
+                    </span>
+                </label>
+
+                <input
+                        type="password"
+                        name="password_confirmation"
+                        id="password_confirmation"
+                        data-validate="required|password"
+                        placeholder="Password"
+                >
+
+                <label>
+                    <span data-validation="terms">
+                        <span data-case="checked">You must agree to our newsletter and conditions</span>
+                    </span>
+                </label>
 
                 <label for="terms">
                     <input
