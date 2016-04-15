@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2016 Sebastian Sulinski
- * Version: 1.2.0 (04-APR-2016)
+ * Version: 1.3.0 (04-APR-2016)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -397,10 +397,8 @@
 
                 "use strict";
 
-                Form.endRequest(form_model);
-
-                var formWrapper = form_model.instance().closest(formWrapper),
-                    messageWrapper = formWrapper.find(formConfirmation);
+                var wrapper = form_model.instance().closest(formWrapper),
+                    messageWrapper = wrapper.find(formConfirmation);
 
                 form_model.instance().fadeOut(200, function() {
 
@@ -415,10 +413,8 @@
 
                 "use strict";
 
-                Form.endRequest(form_model);
-
-                var formWrapper = form_model.instance().closest(formWrapper),
-                    messageWrapper = formWrapper.find(formConfirmation);
+                var wrapper = form_model.instance().closest(formWrapper),
+                    messageWrapper = wrapper.find(formConfirmation);
 
                 form_model.instance().fadeOut(200, function() {
 
@@ -442,12 +438,12 @@
 
                 "use strict";
 
-                Form.endRequest(form_model);
-
-                var formWrapper = form_model.instance().closest(formWrapper),
-                    messageWrapper = formWrapper.find(formConfirmation);
+                var wrapper = form_model.instance().closest(formWrapper),
+                    messageWrapper = wrapper.find(formConfirmation);
 
                 form_model.instance().fadeOut(200, function() {
+
+                    Form.endRequest(form_model);
 
                     messageWrapper.html(data.message).fadeIn(200);
 
