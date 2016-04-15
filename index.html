@@ -165,15 +165,80 @@
 
 
 
+        <hr />
+
+        <h3>Custom action and serialize attribute</h3>
+
+
+        <div data-form-wrapper>
+
+            <form
+                method="post"
+                data-custom-form
+                data-success-behaviour="fadeOutShowMessage"
+                novalidate
+            >
+
+                <label for="title">
+                    <span data-validation="title">
+                        <span data-case="required">Please select your title</span>
+                        <span data-case="value_is">Selected value must be Mr</span>
+                    </span>
+                </label>
+
+                <select
+                        data-field="title"
+                        id="custom_title"
+                        data-validate="required|value_is:1"
+                >
+                    <option value="">Select title</option>
+                    <option value="1">Mr</option>
+                    <option value="2">Mrs</option>
+                    <option value="3">Miss</option>
+                    <option value="4">Ms</option>
+                </select>
+
+                <input
+                        type="submit"
+                        class="button"
+                        value="SEND ENQUIRY"
+                        data-submit-trigger
+                >
+
+                <button
+                        type="button"
+                        class="button hide"
+                        disabled
+                        data-submit-pending
+                >
+                    <i class="fa fa-spinner fa-spin"></i> PROCESSING
+                </button>
+
+            </form>
+
+        </div>
+
+
+
+
     </div>
 
 </div>
 
-<script src="./node_modules/jquery/dist/jquery.min.js"></script>
-<script src="./src/jquery.ssd-form.js"></script>
+<script src="./node_modules/jquery/dist/jquery.js"></script>
+<script src="./src/jquery.ssd-form.min.js"></script>
 <script>
     $(function() {
         $('form[data-ajax-form]').ssdForm();
+        $('form[data-custom-form]').ssdForm({
+            serializeAttribute: 'data-field',
+            actionMethod: function(form, form_model, success, error) {
+
+                console.log('Calling action method');
+                form.endRequest(form_model);
+
+            }
+        });
     });
 </script>
 </body>
