@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2016 Sebastian Sulinski
- * Version: 1.1.0 (04-APR-2016)
+ * Version: 1.2.0 (04-APR-2016)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -24,10 +24,29 @@
                 dataSubmitPending: 'data-submit-pending',
 
                 classHide: 'hide',
-                classShow: 'show',
 
+                classShow: 'show',
                 extendBehaviours: {},
-                extendValidationRules: {}
+
+                extendValidationRules: {},
+
+                ignoreElements: '.button, [disabled]',
+
+                serializeAttribute: null,
+
+                actionMethod: function(form, form_model, success, error) {
+
+                    $.ajax({
+                        method: form_model.method(),
+                        url: form_model.action(),
+                        data: form_model.data(),
+                        dataType: 'json',
+                        cache: false,
+                        success: success,
+                        error: error
+                    });
+
+                }
 
             }, options),
             formWrapper = '[' + settings.dataFormWrapper + ']',
@@ -240,15 +259,13 @@
 
         }, settings.extendValidationRules);
 
-        var Validator = function(form, error) {
+        var Validator = function(form_model, error) {
 
             "use strict";
 
-            var ignoreElements = ".button, [disabled]";
+            if ( ! (form_model instanceof FormModel) ) {
 
-            if ( ! (form instanceof FormModel) ) {
-
-                throw new Error('Invalid argument form.');
+                throw new Error('Invalid argument form_model.');
 
             }
 
@@ -305,7 +322,7 @@
 
                 "use strict";
 
-                var elements = form.instance().find(':input').not(ignoreElements),
+                var elements = form_model.inputs(),
                     length = elements.length,
                     deferred = $.Deferred();
 
@@ -314,7 +331,9 @@
                     var obj = $(this),
                         element = {
                             instance: obj,
-                            name: obj.prop('name'),
+                            name: settings.serializeAttribute === null ?
+                                obj.prop('name') :
+                                obj.attr(settings.serializeAttribute),
                             type: obj.prop('type'),
                             value: obj.prop('value'),
                             rules: obj.data('validate'),
@@ -354,7 +373,7 @@
 
         var FormBehaviour = $.extend({
 
-            redirect: function(form, data) {
+            redirect: function(form_model, data) {
 
                 "use strict";
 
@@ -374,16 +393,16 @@
 
             },
 
-            fadeOutShowMessage: function(form, data) {
+            fadeOutShowMessage: function(form_model, data) {
 
                 "use strict";
 
-                Form.endRequest(form);
+                Form.endRequest(form_model);
 
-                var formWrapper = form.instance().closest(formWrapper),
+                var formWrapper = form_model.instance().closest(formWrapper),
                     messageWrapper = formWrapper.find(formConfirmation);
 
-                form.instance().fadeOut(200, function() {
+                form_model.instance().fadeOut(200, function() {
 
                     messageWrapper.html(data.message).fadeIn(200);
 
@@ -392,16 +411,16 @@
 
             },
 
-            fadeOutShowMessageRedirect: function(form, data) {
+            fadeOutShowMessageRedirect: function(form_model, data) {
 
                 "use strict";
 
-                Form.endRequest(form);
+                Form.endRequest(form_model);
 
-                var formWrapper = form.instance().closest(formWrapper),
+                var formWrapper = form_model.instance().closest(formWrapper),
                     messageWrapper = formWrapper.find(formConfirmation);
 
-                form.instance().fadeOut(200, function() {
+                form_model.instance().fadeOut(200, function() {
 
                     messageWrapper.html(data.message).fadeIn(200, function() {
 
@@ -419,16 +438,16 @@
 
             },
 
-            fadeOutShowMessageResetFadeIn: function(form, data) {
+            fadeOutShowMessageResetFadeIn: function(form_model, data) {
 
                 "use strict";
 
-                Form.endRequest(form);
+                Form.endRequest(form_model);
 
-                var formWrapper = form.instance().closest(formWrapper),
+                var formWrapper = form_model.instance().closest(formWrapper),
                     messageWrapper = formWrapper.find(formConfirmation);
 
-                form.instance().fadeOut(200, function() {
+                form_model.instance().fadeOut(200, function() {
 
                     messageWrapper.html(data.message).fadeIn(200);
 
@@ -436,8 +455,8 @@
 
                         messageWrapper.fadeOut(200, function() {
 
-                            form.instance()[0].reset();
-                            form.instance().fadeIn(200);
+                            form_model.instance()[0].reset();
+                            form_model.instance().fadeIn(200);
 
                         });
 
@@ -447,7 +466,7 @@
 
             },
 
-            callReplaceRemove: function(form, data) {
+            callReplaceRemove: function(form_model, data) {
 
                 "use strict";
 
@@ -456,7 +475,7 @@
 
             },
 
-            ask: function(form, data) {
+            ask: function(form_model, data) {
 
                 "use strict";
 
@@ -464,21 +483,21 @@
                     throw new Error('Behaviour not specified.');
                 }
 
-                this[data.behaviour](form, data);
+                this[data.behaviour](form_model, data);
 
             },
 
-            run: function(form, data) {
+            run: function(form_model, data) {
 
                 "use strict";
 
-                var behaviour = form.successBehaviour();
+                var behaviour = form_model.successBehaviour();
 
                 if ( ! this.hasOwnProperty(behaviour)) {
                     throw new Error('Behaviour does not exist.');
                 }
 
-                this[behaviour](form, data);
+                this[behaviour](form_model, data);
 
             }
 
@@ -490,14 +509,40 @@
 
             "use strict";
 
-            var options = {
+            var inputs = form.find(':input').not(settings.ignoreElements),
+                options = {
                     method : form.prop('method'),
                     action : form.prop('action'),
                     successBehaviour : form.data('success-behaviour'),
-                    data : form.serializeArray()
+                    inputs: inputs,
+                    data : settings.serializeAttribute === null ?
+                            form.serializeArray() :
+                            serialize()
                 },
                 validator,
                 error;
+
+            function serialize() {
+
+                "use strict";
+
+                var serializedArray = [];
+
+                inputs.each(function() {
+
+                    var name = $(this).attr(settings.serializeAttribute),
+                        value = $(this).val();
+
+                    serializedArray.push({
+                        name: name,
+                        value: value
+                    });
+
+                });
+
+                return serializedArray;
+
+            }
 
             function validateOptions() {
 
@@ -551,6 +596,14 @@
 
             };
 
+            this.inputs = function() {
+
+                "use strict";
+
+                return options.inputs;
+
+            };
+
             this.data = function() {
 
                 "use strict";
@@ -582,11 +635,11 @@
 
         var Form = {
 
-            clearErrors: function(form) {
+            clearErrors: function(form_model) {
 
                 "use strict";
 
-                form.instance().find(
+                form_model.instance().find(
                     formValidationSegment + ' ' + formValidationCase
                 ).removeClass(settings.classShow);
 
@@ -600,7 +653,7 @@
 
             },
 
-            displayErrors: function(form, errors) {
+            displayErrors: function(form_model, errors) {
 
                 "use strict";
 
@@ -620,7 +673,7 @@
 
                         index = $.isArray(errors[key]) ? errors[key][0] : errors[key];
 
-                        form
+                        form_model
                             .instance()
                             .find(
                                 '[' + settings.dataValidationSegment + '="' + key + '"] ' +
@@ -634,45 +687,45 @@
 
             },
 
-            beginRequest: function(form) {
+            beginRequest: function(form_model) {
 
                 "use strict";
 
-                if (form.instance().data('quiet')) {
+                if (form_model.instance().data('quiet')) {
                     return true;
                 }
 
-                form.instance().find(formSubmitTrigger).addClass(settings.classHide);
-                form.instance().find(formSubmitPending).removeClass(settings.classHide);
+                form_model.instance().find(formSubmitTrigger).addClass(settings.classHide);
+                form_model.instance().find(formSubmitPending).removeClass(settings.classHide);
 
             },
 
-            endRequest: function(form) {
+            endRequest: function(form_model) {
 
                 "use strict";
 
-                if (form.instance().data('quiet')) {
+                if (form_model.instance().data('quiet')) {
                     return true;
                 }
 
-                form.instance().find(formSubmitTrigger).removeClass(settings.classHide);
-                form.instance().find(formSubmitPending).addClass(settings.classHide);
+                form_model.instance().find(formSubmitTrigger).removeClass(settings.classHide);
+                form_model.instance().find(formSubmitPending).addClass(settings.classHide);
 
             },
 
-            successBehaviour: function(form, data) {
+            successBehaviour: function(form_model, data) {
 
                 "use strict";
 
-                FormBehaviour.run(form, data);
+                FormBehaviour.run(form_model, data);
 
             },
 
-            disableForm: function(form) {
+            disableForm: function(form_model) {
 
                 "use strict";
 
-                this.submitted = form;
+                this.submitted = form_model;
 
             },
 
@@ -684,44 +737,36 @@
 
             },
 
-            endRequestDisplayErrors: function(form, errors) {
+            endRequestDisplayErrors: function(form_model, errors) {
 
                 "use strict";
 
-                this.endRequest(form);
-                this.displayErrors(form, errors);
+                this.endRequest(form_model);
+                this.displayErrors(form_model, errors);
 
             },
 
-            endRequestDisplayErrorsReset: function(form, errors) {
+            endRequestDisplayErrorsReset: function(form_model, errors) {
 
                 "use strict";
 
-                this.endRequestDisplayErrors(form, errors);
-                form.reset();
+                this.endRequestDisplayErrors(form_model, errors);
+                form_model.reset();
 
             },
 
-            formAction: function(form, success, error, fail) {
+            formAction: function(form_model, success, error, fail) {
 
                 "use strict";
 
                 var self = this;
 
-                $.when(form.validate())
+                $.when(form_model.validate())
                     .done(function(data, textStatus, jqXHR) {
 
-                        self.beginRequest(form);
+                        self.beginRequest(form_model);
 
-                        $.ajax({
-                            method: form.method(),
-                            url: form.action(),
-                            data: form.data(),
-                            dataType: 'json',
-                            cache: false,
-                            success: success,
-                            error: error
-                        });
+                        settings.actionMethod(self, form_model, success, error);
 
                     })
                     .fail(fail);
@@ -738,25 +783,25 @@
 
                     event.preventDefault();
 
-                    var form = new FormModel($(this));
+                    var form_model = new FormModel($(this));
 
-                    self.clearErrors(form);
+                    self.clearErrors(form_model);
 
                     self.formAction(
-                        form,
+                        form_model,
                         function(data) {
 
-                            self.successBehaviour(form, data);
+                            self.successBehaviour(form_model, data);
 
                         },
                         function(jqXHR, textStatus, errorThrown) {
 
-                            self.endRequestDisplayErrors(form, jqXHR.responseJSON);
+                            self.endRequestDisplayErrors(form_model, jqXHR.responseJSON);
 
                         },
                         function(errors) {
 
-                            self.endRequestDisplayErrors(form, errors);
+                            self.endRequestDisplayErrors(form_model, errors);
 
                         }
                     );
