@@ -205,6 +205,17 @@ extendBehaviours: {},
 
 // allows you to add more validation rules
 extendValidationRules: {}
+
+// allows you to specify which attributes should be used
+// during data serialization instead of default 'name' attribute
+// example would be for instance 'data-field'
+serializeAttribute: null,
+
+// action that overwrites default behaviour
+// of the validated form submission
+// default one submits form using $.ajax()
+// and form 'method' and 'action' attributes
+actionMethod: function(form, form_model, success, error) {}
 ```
 
 ## Validation
@@ -336,4 +347,51 @@ $('form[data-ajax-form]').ssdForm({
 >
 ...
 </form>
+```
+
+## Custom serialize attribute
+
+There might be some situations where you might want to use different attribute on your form fields to represent the identity of your input than the default `name`.
+
+This might be useful in situations where you might be sending request to the external service over the ssl and don't want your server to receive any data when the form is submitted.
+
+You can specify what field attribute should be used by overwriting the `serializeAttribute` property.
+
+```
+$('form[data-ajax-form]').ssdForm({
+
+    serializeAttribute: 'data-field'
+
+});
+
+<input
+    type="text"
+    data-field="year"
+    id="year"
+    data-validate="required|number_is:2016"
+    placeholder="Provide current year"
+>
+```
+
+## Custom action
+
+If you'd like to perform custom action once the form has been successfully validated, you can overwrite the default one by using the `actionMethod` property. This property is of a function type and takes 4 arguments.
+
+- `form`: instance of the main Form object
+- `form_model`: instance of the FormModel
+- `success`: default success callback
+- `error`: default error callback
+
+```
+$('form[data-ajax-form]').ssdForm({
+
+    actionMethod: function(form, form_model, success, error) {
+
+        console.log('Calling action method');
+
+        form.endRequest(form_model);
+
+    }
+
+});
 ```
