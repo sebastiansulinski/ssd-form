@@ -263,6 +263,9 @@ Once the form has been processed successfully it will trigger one of the followi
 - `reload` : reloads the page
 - `fadeOutShowMessage` : fades out the form and displays the message in its place. Response has to contain `message` entry `{ "message" : "Your request has been processed successfully." }`
 - `fadeOutShowMessageRedirect` : fades out the form, displays the message and after 3 seconds redirects to a given url/i. Response needs to contain `message` and `redirect` entry `{ "message" : "Your request has been processed successfully.", "redirect" : "/confirmation" }`
+- `fadeOutShowMessageReload` : fades out the form, displays the message and after 3 seconds reloads the page. Response needs to contain `message` entry { "message" : "Your request has been processed successfully." }`
+- `fadeOutShowMessageResetFadeIn` : fades out the form, displays the message, resets the form and fades it back in. Response needs to contain `message` entry `{ "message" : "Your request has been processed successfully." }`
+- `callReplaceRemove` : makes ajax call and replaces and removes elements specified in the response.
 
 ## Extending validation rules and form behaviours
 
