@@ -2,862 +2,880 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2016 Sebastian Sulinski
- * Version: 1.3.1 (04-APR-2016)
+ * Version: 1.3.2 (29-JAN-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
-;(function(window, $, undefined) {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module unless amdModuleId is set
+        define(['jquery'], function (a0) {
+            return (factory(a0));
+        });
+    } else if (typeof exports === 'object') {
+        // Node. Does not work with strict CommonJS, but
+        // only CommonJS-like environments that support module.exports,
+        // like Node.
+        module.exports = factory(require('jquery'));
+    } else {
+        factory(root["jQuery"]);
+    }
+}(this, function ($) {
 
-    "use strict";
-
-    $.fn.ssdForm = function (options) {
+    (function() {
 
         "use strict";
 
-        var settings = $.extend({
-
-                dataFormWrapper: 'data-form-wrapper',
-                dataConfirmation: 'data-confirmation',
-                dataValidationSegment: 'data-validation',
-                dataValidationCase: 'data-case',
-                dataSubmitTrigger: 'data-submit-trigger',
-                dataSubmitPending: 'data-submit-pending',
-
-                classHide: 'hide',
-
-                classShow: 'show',
-                extendBehaviours: {},
-
-                extendValidationRules: {},
-
-                ignoreElements: '.button, [disabled]',
-
-                serializeAttribute: null,
-
-                actionMethod: function(form, form_model, success, error) {
-
-                    $.ajax({
-                        method: form_model.method(),
-                        url: form_model.action(),
-                        data: form_model.data(),
-                        dataType: 'json',
-                        cache: false,
-                        success: success,
-                        error: error
-                    });
-
-                }
-
-            }, options),
-            formWrapper = '[' + settings.dataFormWrapper + ']',
-            formConfirmation = '[' + settings.dataConfirmation + ']',
-            formValidationSegment = '[' + settings.dataValidationSegment + ']',
-            formValidationCase = '[' + settings.dataValidationCase + ']',
-            formSubmitTrigger = '[' + settings.dataSubmitTrigger + ']',
-            formSubmitPending = '[' + settings.dataSubmitPending + ']';
-
-        var ErrorCollection = function() {
+        $.fn.ssdForm = function (options) {
 
             "use strict";
 
-            var errors = {};
+            var settings = $.extend({
 
-            this.add = function(key, index) {
+                    dataFormWrapper: 'data-form-wrapper',
+                    dataConfirmation: 'data-confirmation',
+                    dataValidationSegment: 'data-validation',
+                    dataValidationCase: 'data-case',
+                    dataSubmitTrigger: 'data-submit-trigger',
+                    dataSubmitPending: 'data-submit-pending',
 
-                "use strict";
+                    classHide: 'hide',
 
-                if (errors.hasOwnProperty(key)) {
-                    return false;
-                }
+                    classShow: 'show',
+                    extendBehaviours: {},
 
-                errors[key] = index;
+                    extendValidationRules: {},
 
-            };
+                    ignoreElements: '.button, [disabled]',
 
-            this.all = function() {
+                    serializeAttribute: null,
 
-                "use strict";
+                    actionMethod: function(form, form_model, success, error) {
 
-                return errors;
-
-            };
-
-            this.empty = function() {
-
-                return Object.keys(errors).length === 0;
-
-            };
-
-        };
-
-        var Document = {
-
-            replace: function(data) {
-
-                "use strict";
-
-                if (data.replace === undefined) {
-                    return;
-                }
-
-                $.each(data.replace, function(key, value) {
-
-                    $('[data-' + key + ']').html(value);
-
-                });
-
-            },
-
-            remove: function(data) {
-
-                "use strict";
-
-                if (data.remove === undefined) {
-                    return;
-                }
-
-                $.each(data.remove, function(key, value) {
-
-                    $('[data-' + value + ']').remove();
-
-                });
-
-            },
-
-            reload: function() {
-
-                "use strict";
-
-                window.location.reload(true);
-
-            },
-
-            redirect: function(url) {
-
-                "use strict";
-
-                window.location.href = url;
-
-            }
-
-        };
-
-        var ValidatorRule = $.extend({
-
-            elements: [],
-
-            required: function(element) {
-
-                "use strict";
-
-                return ( ! (
-                    element.value === '' ||
-                    element.value === null ||
-                    element.value === undefined
-                ));
-
-            },
-
-            checked: function(element) {
-
-                "use strict";
-
-                return element.isChecked;
-
-            },
-
-            value_is: function(element) {
-
-                "use strict";
-
-                return element.value == element.rules_collection;
-
-            },
-
-            email: function(element) {
-
-                "use strict";
-
-                var pattern = /^[a-zA-Z0-9._\-]+@[a-zA-Z0-9]+([.\-]?[a-zA-Z0-9]+)?([\.]{1}[a-zA-Z]{2,4}){1,4}$/;
-
-                return pattern.test(element.value);
-
-            },
-
-            password: function(element) {
-
-                "use strict";
-
-                var pattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
-                return pattern.test(element.value);
-            },
-
-            min: function(element) {
-
-                "use strict";
-
-                return element.value.length >= element.rules_collection;
-
-            },
-
-            max: function(element) {
-
-                "use strict";
-
-                return element.value.length <= element.rules_collection;
-
-            },
-
-            confirmed: function(element) {
-
-                "use strict";
-
-                var confirmation_field = element.name + '_confirmation',
-                    confirmation = this.elements.filter(function (i, v) {
-                        return v.name === confirmation_field;
-                    })[0];
-
-                if (confirmation.length === 0) {
-
-                    throw new Error(element.name + '_confirmation' + ' field is missing');
-
-                }
-
-                return confirmation.value === element.value;
-
-            },
-
-            test: function(elements, element) {
-
-                "use strict";
-
-                var self = this,
-                    deferred = $.Deferred();
-
-                self.elements = elements;
-
-                $.each(element.rules, function(i, v) {
-
-                    var split = v.split(':'),
-                        rule = split.shift();
-
-                    element.rules_collection = split;
-
-                    if ( ! self[rule](element)) {
-                        deferred.reject(rule);
-                    }
-
-                    if ( (i + 1) == element.rules.length ) {
-                        deferred.resolve();
-                    }
-
-                });
-
-                return deferred.promise();
-
-            }
-
-        }, settings.extendValidationRules);
-
-        var Validator = function(form_model, error) {
-
-            "use strict";
-
-            if ( ! (form_model instanceof FormModel) ) {
-
-                throw new Error('Invalid argument form_model.');
-
-            }
-
-            if ( ! (error instanceof ErrorCollection) ) {
-
-                throw new Error('Invalid argument error.');
-
-            }
-
-            function shouldInclude(element) {
-
-                "use strict";
-
-                return (
-                    element.isVisible ||
-                    element.isEditor
-                );
-
-            }
-
-            function validate(elements, element) {
-
-                "use strict";
-
-                if ( ( $.inArray('required', element.rules) === -1 ) && element.value == '') {
-                    return true;
-                }
-
-                return ValidatorRule.test(elements, element);
-
-            }
-
-            function end(i, length, deferred) {
-
-                "use strict";
-
-                if ( (i + 1) === length ) {
-
-                    if (error.empty()) {
-
-                        deferred.resolve();
-
-                    } else {
-
-                        deferred.reject(error.all());
-
-                    }
-
-                }
-
-            }
-
-            this.run = function() {
-
-                "use strict";
-
-                var elements = form_model.inputs(),
-                    length = elements.length,
-                    deferred = $.Deferred();
-
-                $.each(elements, function(i, v) {
-
-                    var obj = $(this),
-                        element = {
-                            instance: obj,
-                            name: settings.serializeAttribute === null ?
-                                obj.prop('name') :
-                                obj.attr(settings.serializeAttribute),
-                            type: obj.prop('type'),
-                            value: obj.prop('value'),
-                            rules: obj.data('validate'),
-                            isChecked: obj.is(':checked'),
-                            isVisible: obj.is(':visible'),
-                            isEditor: obj.hasClass('editor')
-                        };
-
-                    if ( ! shouldInclude(element)) {
-                        end(i, length, deferred);
-                        return true;
-                    }
-
-                    if ( element.rules === undefined || element.rules.length === 0 ) {
-                        end(i, length, deferred);
-                        return true;
-                    } else {
-                        element.rules = element.rules.split('|');
-                    }
-
-                    $.when(validate(elements, element))
-                        .done(function() {
-                            end(i, length, deferred);
-                        })
-                        .fail(function(rule) {
-                            error.add(element.name, rule);
-                            end(i, length, deferred);
+                        $.ajax({
+                            method: form_model.method(),
+                            url: form_model.action(),
+                            data: form_model.data(),
+                            dataType: 'json',
+                            cache: false,
+                            success: success,
+                            error: error
                         });
 
-                });
+                    }
 
-                return deferred.promise();
+                }, options),
+                formWrapper = '[' + settings.dataFormWrapper + ']',
+                formConfirmation = '[' + settings.dataConfirmation + ']',
+                formValidationSegment = '[' + settings.dataValidationSegment + ']',
+                formValidationCase = '[' + settings.dataValidationCase + ']',
+                formSubmitTrigger = '[' + settings.dataSubmitTrigger + ']',
+                formSubmitPending = '[' + settings.dataSubmitPending + ']';
 
-            }
-
-        };
-
-        var FormBehaviour = $.extend({
-
-            redirect: function(form_model, data) {
-
-                "use strict";
-
-                if ( ! data.redirect ) {
-                    throw new Error('Redirect entry missing.');
-                }
-
-                Document.redirect(data.redirect);
-
-            },
-
-            reload: function() {
+            var ErrorCollection = function() {
 
                 "use strict";
 
-                Document.reload();
+                var errors = {};
 
-            },
+                this.add = function(key, index) {
 
-            fadeOutShowMessage: function(form_model, data) {
-
-                "use strict";
-
-                var wrapper = form_model.instance().closest(formWrapper),
-                    messageWrapper = wrapper.find(formConfirmation);
-
-                form_model.instance().fadeOut(200, function() {
-
-                    messageWrapper.html(data.message).fadeIn(200);
-
-                });
-
-
-            },
-
-            fadeOutShowMessageRedirect: function(form_model, data) {
-
-                "use strict";
-
-                var wrapper = form_model.instance().closest(formWrapper),
-                    messageWrapper = wrapper.find(formConfirmation);
-
-                form_model.instance().fadeOut(200, function() {
-
-                    messageWrapper.html(data.message).fadeIn(200, function() {
-
-                        setTimeout(function() {
-
-                            window.location.href = data.redirect;
-
-                        }, 3000);
-
-                    });
-
-                });
-
-
-            },
-
-            fadeOutShowMessageReload: function(form_model, data) {
-
-                "use strict";
-
-                var wrapper = form_model.instance().closest(formWrapper),
-                    messageWrapper = wrapper.find(formConfirmation);
-
-                form_model.instance().fadeOut(200, function() {
-
-                    messageWrapper.html(data.message).fadeIn(200, function() {
-
-                        setTimeout(function() {
-
-                            window.location.reload(true);
-
-                        }, 3000);
-
-                    });
-
-                });
-
-
-            },
-
-            fadeOutShowMessageResetFadeIn: function(form_model, data) {
-
-                "use strict";
-
-                var wrapper = form_model.instance().closest(formWrapper),
-                    messageWrapper = wrapper.find(formConfirmation);
-
-                form_model.instance().fadeOut(200, function() {
-
-                    Form.endRequest(form_model);
-
-                    messageWrapper.html(data.message).fadeIn(200);
-
-                    setTimeout(function() {
-
-                        messageWrapper.fadeOut(200, function() {
-
-                            form_model.instance()[0].reset();
-                            form_model.instance().fadeIn(200);
-
-                        });
-
-                    }, 3000);
-
-                });
-
-            },
-
-            callReplaceRemove: function(form_model, data) {
-
-                "use strict";
-
-                Document.replace(data);
-                Document.remove(data);
-
-            },
-
-            ask: function(form_model, data) {
-
-                "use strict";
-
-                if ( ! this.hasOwnProperty(data.behaviour)) {
-                    throw new Error('Behaviour not specified.');
-                }
-
-                this[data.behaviour](form_model, data);
-
-            },
-
-            run: function(form_model, data) {
-
-                "use strict";
-
-                var behaviour = form_model.successBehaviour();
-
-                if ( ! this.hasOwnProperty(behaviour)) {
-                    throw new Error('Behaviour does not exist.');
-                }
-
-                this[behaviour](form_model, data);
-
-            }
-
-        }, settings.extendBehaviours);
-
-
-
-        var FormModel = function(form) {
-
-            "use strict";
-
-            var inputs = form.find(':input').not(settings.ignoreElements),
-                options = {
-                    method : form.prop('method'),
-                    action : form.prop('action'),
-                    successBehaviour : form.data('success-behaviour'),
-                    inputs: inputs,
-                    data : settings.serializeAttribute === null ?
-                            form.serializeArray() :
-                            serialize()
-                },
-                validator,
-                error;
-
-            function serialize() {
-
-                "use strict";
-
-                var serializedArray = [];
-
-                inputs.each(function() {
-
-                    var name = $(this).attr(settings.serializeAttribute),
-                        value = $(this).val();
-
-                    serializedArray.push({
-                        name: name,
-                        value: value
-                    });
-
-                });
-
-                return serializedArray;
-
-            }
-
-            function validateOptions() {
-
-                "use strict";
-
-                if (options.method === undefined) {
-
-                    options.method = 'post';
-
-                }
-
-                if (options.action === undefined) {
-
-                    throw new Error('No action defined.');
-
-                }
-
-            }
-
-            validateOptions();
-
-            this.instance = function() {
-
-                "use strict";
-
-                return form;
-
-            };
-
-            this.method = function() {
-
-                "use strict";
-
-                return options.method;
-
-            };
-
-            this.action = function() {
-
-                "use strict";
-
-                return options.action;
-
-            };
-
-            this.successBehaviour = function() {
-
-                "use strict";
-
-                return options.successBehaviour;
-
-            };
-
-            this.inputs = function() {
-
-                "use strict";
-
-                return options.inputs;
-
-            };
-
-            this.data = function() {
-
-                "use strict";
-
-                return options.data;
-
-            };
-
-            this.validate = function() {
-
-                "use strict";
-
-                error = new ErrorCollection();
-                validator = new Validator(this, error);
-
-                return validator.run();
-
-            };
-
-            this.reset = function() {
-
-                "use strict";
-
-                form.trigger('reset');
-
-            }
-
-        };
-
-        var Form = {
-
-            clearErrors: function(form_model) {
-
-                "use strict";
-
-                form_model.instance().find(
-                    formValidationSegment + ' ' + formValidationCase
-                ).removeClass(settings.classShow);
-
-            },
-
-            displayAlert: function(content) {
-
-                "use strict";
-
-                // TODO - to implement
-
-            },
-
-            displayErrors: function(form_model, errors) {
-
-                "use strict";
-
-                var index;
-
-                for (var key in errors) {
+                    "use strict";
 
                     if (errors.hasOwnProperty(key)) {
+                        return false;
+                    }
 
-                        if (key == 'alert') {
+                    errors[key] = index;
 
-                            this.displayAlert(errors[key]);
+                };
 
-                            continue;
+                this.all = function() {
 
+                    "use strict";
+
+                    return errors;
+
+                };
+
+                this.empty = function() {
+
+                    return Object.keys(errors).length === 0;
+
+                };
+
+            };
+
+            var Document = {
+
+                replace: function(data) {
+
+                    "use strict";
+
+                    if (data.replace === undefined) {
+                        return;
+                    }
+
+                    $.each(data.replace, function(key, value) {
+
+                        $('[data-' + key + ']').html(value);
+
+                    });
+
+                },
+
+                remove: function(data) {
+
+                    "use strict";
+
+                    if (data.remove === undefined) {
+                        return;
+                    }
+
+                    $.each(data.remove, function(key, value) {
+
+                        $('[data-' + value + ']').remove();
+
+                    });
+
+                },
+
+                reload: function() {
+
+                    "use strict";
+
+                    window.location.reload(true);
+
+                },
+
+                redirect: function(url) {
+
+                    "use strict";
+
+                    window.location.href = url;
+
+                }
+
+            };
+
+            var ValidatorRule = $.extend({
+
+                elements: [],
+
+                required: function(element) {
+
+                    "use strict";
+
+                    return ( ! (
+                        element.value === '' ||
+                        element.value === null ||
+                        element.value === undefined
+                    ));
+
+                },
+
+                checked: function(element) {
+
+                    "use strict";
+
+                    return element.isChecked;
+
+                },
+
+                value_is: function(element) {
+
+                    "use strict";
+
+                    return element.value == element.rules_collection;
+
+                },
+
+                email: function(element) {
+
+                    "use strict";
+
+                    var pattern = /^[a-zA-Z0-9._\-]+@[a-zA-Z0-9]+([.\-]?[a-zA-Z0-9]+)?([\.]{1}[a-zA-Z]{2,4}){1,4}$/;
+
+                    return pattern.test(element.value);
+
+                },
+
+                password: function(element) {
+
+                    "use strict";
+
+                    var pattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+                    return pattern.test(element.value);
+                },
+
+                min: function(element) {
+
+                    "use strict";
+
+                    return element.value.length >= element.rules_collection;
+
+                },
+
+                max: function(element) {
+
+                    "use strict";
+
+                    return element.value.length <= element.rules_collection;
+
+                },
+
+                confirmed: function(element) {
+
+                    "use strict";
+
+                    var confirmation_field = element.name + '_confirmation',
+                        confirmation = this.elements.filter(function (i, v) {
+                            return v.name === confirmation_field;
+                        })[0];
+
+                    if (confirmation.length === 0) {
+
+                        throw new Error(element.name + '_confirmation' + ' field is missing');
+
+                    }
+
+                    return confirmation.value === element.value;
+
+                },
+
+                test: function(elements, element) {
+
+                    "use strict";
+
+                    var self = this,
+                        deferred = $.Deferred();
+
+                    self.elements = elements;
+
+                    $.each(element.rules, function(i, v) {
+
+                        var split = v.split(':'),
+                            rule = split.shift();
+
+                        element.rules_collection = split;
+
+                        if ( ! self[rule](element)) {
+                            deferred.reject(rule);
                         }
 
-                        index = $.isArray(errors[key]) ? errors[key][0] : errors[key];
+                        if ( (i + 1) == element.rules.length ) {
+                            deferred.resolve();
+                        }
 
-                        form_model
-                            .instance()
-                            .find(
-                                '[' + settings.dataValidationSegment + '="' + key + '"] ' +
-                                '[' + settings.dataValidationCase + '="' + index + '"]'
-                            )
-                            .addClass(settings.classShow);
+                    });
+
+                    return deferred.promise();
+
+                }
+
+            }, settings.extendValidationRules);
+
+            var Validator = function(form_model, error) {
+
+                "use strict";
+
+                if ( ! (form_model instanceof FormModel) ) {
+
+                    throw new Error('Invalid argument form_model.');
+
+                }
+
+                if ( ! (error instanceof ErrorCollection) ) {
+
+                    throw new Error('Invalid argument error.');
+
+                }
+
+                function shouldInclude(element) {
+
+                    "use strict";
+
+                    return (
+                        element.isVisible ||
+                        element.isEditor
+                    );
+
+                }
+
+                function validate(elements, element) {
+
+                    "use strict";
+
+                    if ( ( $.inArray('required', element.rules) === -1 ) && element.value == '') {
+                        return true;
+                    }
+
+                    return ValidatorRule.test(elements, element);
+
+                }
+
+                function end(i, length, deferred) {
+
+                    "use strict";
+
+                    if ( (i + 1) === length ) {
+
+                        if (error.empty()) {
+
+                            deferred.resolve();
+
+                        } else {
+
+                            deferred.reject(error.all());
+
+                        }
 
                     }
 
                 }
 
-            },
+                this.run = function() {
 
-            beginRequest: function(form_model) {
+                    "use strict";
 
-                "use strict";
+                    var elements = form_model.inputs(),
+                        length = elements.length,
+                        deferred = $.Deferred();
 
-                if (form_model.instance().data('quiet')) {
-                    return true;
+                    $.each(elements, function(i, v) {
+
+                        var obj = $(this),
+                            element = {
+                                instance: obj,
+                                name: settings.serializeAttribute === null ?
+                                    obj.prop('name') :
+                                    obj.attr(settings.serializeAttribute),
+                                type: obj.prop('type'),
+                                value: obj.prop('value'),
+                                rules: obj.data('validate'),
+                                isChecked: obj.is(':checked'),
+                                isVisible: obj.is(':visible'),
+                                isEditor: obj.hasClass('editor')
+                            };
+
+                        if ( ! shouldInclude(element)) {
+                            end(i, length, deferred);
+                            return true;
+                        }
+
+                        if ( element.rules === undefined || element.rules.length === 0 ) {
+                            end(i, length, deferred);
+                            return true;
+                        } else {
+                            element.rules = element.rules.split('|');
+                        }
+
+                        $.when(validate(elements, element))
+                            .done(function() {
+                                end(i, length, deferred);
+                            })
+                            .fail(function(rule) {
+                                error.add(element.name, rule);
+                                end(i, length, deferred);
+                            });
+
+                    });
+
+                    return deferred.promise();
+
                 }
 
-                form_model.instance().find(formSubmitTrigger).addClass(settings.classHide);
-                form_model.instance().find(formSubmitPending).removeClass(settings.classHide);
+            };
 
-            },
+            var FormBehaviour = $.extend({
 
-            endRequest: function(form_model) {
+                redirect: function(form_model, data) {
 
-                "use strict";
+                    "use strict";
 
-                if (form_model.instance().data('quiet')) {
-                    return true;
+                    if ( ! data.redirect ) {
+                        throw new Error('Redirect entry missing.');
+                    }
+
+                    Document.redirect(data.redirect);
+
+                },
+
+                reload: function() {
+
+                    "use strict";
+
+                    Document.reload();
+
+                },
+
+                fadeOutShowMessage: function(form_model, data) {
+
+                    "use strict";
+
+                    var wrapper = form_model.instance().closest(formWrapper),
+                        messageWrapper = wrapper.find(formConfirmation);
+
+                    form_model.instance().fadeOut(200, function() {
+
+                        messageWrapper.html(data.message).fadeIn(200);
+
+                    });
+
+
+                },
+
+                fadeOutShowMessageRedirect: function(form_model, data) {
+
+                    "use strict";
+
+                    var wrapper = form_model.instance().closest(formWrapper),
+                        messageWrapper = wrapper.find(formConfirmation);
+
+                    form_model.instance().fadeOut(200, function() {
+
+                        messageWrapper.html(data.message).fadeIn(200, function() {
+
+                            setTimeout(function() {
+
+                                window.location.href = data.redirect;
+
+                            }, 3000);
+
+                        });
+
+                    });
+
+
+                },
+
+                fadeOutShowMessageReload: function(form_model, data) {
+
+                    "use strict";
+
+                    var wrapper = form_model.instance().closest(formWrapper),
+                        messageWrapper = wrapper.find(formConfirmation);
+
+                    form_model.instance().fadeOut(200, function() {
+
+                        messageWrapper.html(data.message).fadeIn(200, function() {
+
+                            setTimeout(function() {
+
+                                window.location.reload(true);
+
+                            }, 3000);
+
+                        });
+
+                    });
+
+
+                },
+
+                fadeOutShowMessageResetFadeIn: function(form_model, data) {
+
+                    "use strict";
+
+                    var wrapper = form_model.instance().closest(formWrapper),
+                        messageWrapper = wrapper.find(formConfirmation);
+
+                    form_model.instance().fadeOut(200, function() {
+
+                        Form.endRequest(form_model);
+
+                        messageWrapper.html(data.message).fadeIn(200);
+
+                        setTimeout(function() {
+
+                            messageWrapper.fadeOut(200, function() {
+
+                                form_model.instance()[0].reset();
+                                form_model.instance().fadeIn(200);
+
+                            });
+
+                        }, 3000);
+
+                    });
+
+                },
+
+                callReplaceRemove: function(form_model, data) {
+
+                    "use strict";
+
+                    Document.replace(data);
+                    Document.remove(data);
+
+                },
+
+                ask: function(form_model, data) {
+
+                    "use strict";
+
+                    if ( ! this.hasOwnProperty(data.behaviour)) {
+                        throw new Error('Behaviour not specified.');
+                    }
+
+                    this[data.behaviour](form_model, data);
+
+                },
+
+                run: function(form_model, data) {
+
+                    "use strict";
+
+                    var behaviour = form_model.successBehaviour();
+
+                    if ( ! this.hasOwnProperty(behaviour)) {
+                        throw new Error('Behaviour does not exist.');
+                    }
+
+                    this[behaviour](form_model, data);
+
                 }
 
-                form_model.instance().find(formSubmitTrigger).removeClass(settings.classHide);
-                form_model.instance().find(formSubmitPending).addClass(settings.classHide);
+            }, settings.extendBehaviours);
 
-            },
 
-            successBehaviour: function(form_model, data) {
 
-                "use strict";
-
-                FormBehaviour.run(form_model, data);
-
-            },
-
-            disableForm: function(form_model) {
+            var FormModel = function(form) {
 
                 "use strict";
 
-                this.submitted = form_model;
+                var inputs = form.find(':input').not(settings.ignoreElements),
+                    options = {
+                        method : form.prop('method'),
+                        action : form.prop('action'),
+                        successBehaviour : form.data('success-behaviour'),
+                        inputs: inputs,
+                        data : settings.serializeAttribute === null ?
+                                form.serializeArray() :
+                                serialize()
+                    },
+                    validator,
+                    error;
 
-            },
+                function serialize() {
 
-            enableForm: function() {
+                    "use strict";
 
-                "use strict";
+                    var serializedArray = [];
 
-                this.submitted = null;
+                    inputs.each(function() {
 
-            },
+                        var name = $(this).attr(settings.serializeAttribute),
+                            value = $(this).val();
 
-            endRequestDisplayErrors: function(form_model, errors) {
+                        serializedArray.push({
+                            name: name,
+                            value: value
+                        });
 
-                "use strict";
+                    });
 
-                this.endRequest(form_model);
-                this.displayErrors(form_model, errors);
+                    return serializedArray;
 
-            },
+                }
 
-            endRequestDisplayErrorsReset: function(form_model, errors) {
+                function validateOptions() {
 
-                "use strict";
+                    "use strict";
 
-                this.endRequestDisplayErrors(form_model, errors);
-                form_model.reset();
+                    if (options.method === undefined) {
 
-            },
+                        options.method = 'post';
 
-            formAction: function(form_model, success, error, fail) {
+                    }
 
-                "use strict";
+                    if (options.action === undefined) {
 
-                var self = this;
+                        throw new Error('No action defined.');
 
-                $.when(form_model.validate())
-                    .done(function(data, textStatus, jqXHR) {
+                    }
 
-                        self.beginRequest(form_model);
+                }
 
-                        settings.actionMethod(self, form_model, success, error);
+                validateOptions();
 
-                    })
-                    .fail(fail);
+                this.instance = function() {
 
-            },
+                    "use strict";
 
-            submit: function(instance) {
+                    return form;
 
-                "use strict";
+                };
 
-                var self = this;
+                this.method = function() {
 
-                $(instance).on('submit', function(event) {
+                    "use strict";
 
-                    event.preventDefault();
+                    return options.method;
 
-                    var form_model = new FormModel($(this));
+                };
 
-                    self.clearErrors(form_model);
+                this.action = function() {
 
-                    self.formAction(
-                        form_model,
-                        function(data) {
+                    "use strict";
 
-                            self.successBehaviour(form_model, data);
+                    return options.action;
 
-                        },
-                        function(jqXHR, textStatus, errorThrown) {
+                };
 
-                            self.endRequestDisplayErrors(form_model, jqXHR.responseJSON);
+                this.successBehaviour = function() {
 
-                        },
-                        function(errors) {
+                    "use strict";
 
-                            self.endRequestDisplayErrors(form_model, errors);
+                    return options.successBehaviour;
+
+                };
+
+                this.inputs = function() {
+
+                    "use strict";
+
+                    return options.inputs;
+
+                };
+
+                this.data = function() {
+
+                    "use strict";
+
+                    return options.data;
+
+                };
+
+                this.validate = function() {
+
+                    "use strict";
+
+                    error = new ErrorCollection();
+                    validator = new Validator(this, error);
+
+                    return validator.run();
+
+                };
+
+                this.reset = function() {
+
+                    "use strict";
+
+                    form.trigger('reset');
+
+                }
+
+            };
+
+            var Form = {
+
+                clearErrors: function(form_model) {
+
+                    "use strict";
+
+                    form_model.instance().find(
+                        formValidationSegment + ' ' + formValidationCase
+                    ).removeClass(settings.classShow);
+
+                },
+
+                displayAlert: function(content) {
+
+                    "use strict";
+
+                    // TODO - to implement
+
+                },
+
+                displayErrors: function(form_model, errors) {
+
+                    "use strict";
+
+                    var index;
+
+                    for (var key in errors) {
+
+                        if (errors.hasOwnProperty(key)) {
+
+                            if (key == 'alert') {
+
+                                this.displayAlert(errors[key]);
+
+                                continue;
+
+                            }
+
+                            index = $.isArray(errors[key]) ? errors[key][0] : errors[key];
+
+                            form_model
+                                .instance()
+                                .find(
+                                    '[' + settings.dataValidationSegment + '="' + key + '"] ' +
+                                    '[' + settings.dataValidationCase + '="' + index + '"]'
+                                )
+                                .addClass(settings.classShow);
 
                         }
-                    );
 
-                });
+                    }
 
-            },
+                },
 
-            clickSubmit: function() {
+                beginRequest: function(form_model) {
 
-                "use strict";
+                    "use strict";
 
-                $(document).on('click', '.clickSubmit', function(event) {
+                    if (form_model.instance().data('quiet')) {
+                        return true;
+                    }
 
-                    event.preventDefault();
-                    event.stopPropagation();
+                    form_model.instance().find(formSubmitTrigger).addClass(settings.classHide);
+                    form_model.instance().find(formSubmitPending).removeClass(settings.classHide);
 
-                    var target = $(this).data('target');
+                },
 
-                    $(target).submit();
+                endRequest: function(form_model) {
 
-                });
+                    "use strict";
 
-            },
+                    if (form_model.instance().data('quiet')) {
+                        return true;
+                    }
 
-            init: function(instance) {
+                    form_model.instance().find(formSubmitTrigger).removeClass(settings.classHide);
+                    form_model.instance().find(formSubmitPending).addClass(settings.classHide);
 
-                "use strict";
+                },
 
-                this.submit(instance);
-                this.clickSubmit();
+                successBehaviour: function(form_model, data) {
 
-            }
+                    "use strict";
 
+                    FormBehaviour.run(form_model, data);
+
+                },
+
+                disableForm: function(form_model) {
+
+                    "use strict";
+
+                    this.submitted = form_model;
+
+                },
+
+                enableForm: function() {
+
+                    "use strict";
+
+                    this.submitted = null;
+
+                },
+
+                endRequestDisplayErrors: function(form_model, errors) {
+
+                    "use strict";
+
+                    this.endRequest(form_model);
+                    this.displayErrors(form_model, errors);
+
+                },
+
+                endRequestDisplayErrorsReset: function(form_model, errors) {
+
+                    "use strict";
+
+                    this.endRequestDisplayErrors(form_model, errors);
+                    form_model.reset();
+
+                },
+
+                formAction: function(form_model, success, error, fail) {
+
+                    "use strict";
+
+                    var self = this;
+
+                    $.when(form_model.validate())
+                        .done(function(data, textStatus, jqXHR) {
+
+                            self.beginRequest(form_model);
+
+                            settings.actionMethod(self, form_model, success, error);
+
+                        })
+                        .fail(fail);
+
+                },
+
+                submit: function(instance) {
+
+                    "use strict";
+
+                    var self = this;
+
+                    $(instance).on('submit', function(event) {
+
+                        event.preventDefault();
+
+                        var form_model = new FormModel($(this));
+
+                        self.clearErrors(form_model);
+
+                        self.formAction(
+                            form_model,
+                            function(data) {
+
+                                self.successBehaviour(form_model, data);
+
+                            },
+                            function(jqXHR, textStatus, errorThrown) {
+
+                                self.endRequestDisplayErrors(form_model, jqXHR.responseJSON);
+
+                            },
+                            function(errors) {
+
+                                self.endRequestDisplayErrors(form_model, errors);
+
+                            }
+                        );
+
+                    });
+
+                },
+
+                clickSubmit: function() {
+
+                    "use strict";
+
+                    $(document).on('click', '.clickSubmit', function(event) {
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        var target = $(this).data('target');
+
+                        $(target).submit();
+
+                    });
+
+                },
+
+                init: function(instance) {
+
+                    "use strict";
+
+                    this.submit(instance);
+                    this.clickSubmit();
+
+                }
+
+            };
+
+            return Form.init(this);
         };
 
-        return Form.init(this);
-    };
+    })();
 
-})(window, window.jQuery);
+}));
