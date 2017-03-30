@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2016 Sebastian Sulinski
- * Version: 1.3.2 (29-JAN-2017)
+ * Version: 1.3.3 (30-MAR-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -45,6 +45,13 @@
                     extendBehaviours: {},
 
                     extendValidationRules: {},
+
+                    postAjaxSuccess: function(form, form_model, data) {
+                        form.successBehaviour(form_model, data);
+                    },
+                    postAjaxFailure: function(form, form_model, jqXHR, textStatus, errorThrown) {
+                        form.endRequestDisplayErrors(form_model, jqXHR.responseJSON);
+                    },
 
                     ignoreElements: '.button, [disabled]',
 
@@ -826,12 +833,20 @@
                             form_model,
                             function(data) {
 
-                                self.successBehaviour(form_model, data);
+                                settings.postAjaxSuccess(
+                                    self, form_model, data
+                                );
 
                             },
                             function(jqXHR, textStatus, errorThrown) {
 
-                                self.endRequestDisplayErrors(form_model, jqXHR.responseJSON);
+                                settings.postAjaxFailure(
+                                    self,
+                                    form_model,
+                                    jqXHR,
+                                    textStatus,
+                                    errorThrown
+                                )
 
                             },
                             function(errors) {
