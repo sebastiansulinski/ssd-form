@@ -206,6 +206,12 @@ extendBehaviours: {},
 // allows you to add more validation rules
 extendValidationRules: {}
 
+// allows you to run custom behaviour on successful ajax response
+postAjaxSuccess: function(form, form_model, data) {}
+
+// allows you to run custom behaviour on failed ajax response
+postAjaxFailure: function(form, form_model, jqXHR, textStatus, errorThrown) {}
+
 // allows you to specify which attributes should be used
 // during data serialization instead of default 'name' attribute
 // example would be for instance 'data-field'
