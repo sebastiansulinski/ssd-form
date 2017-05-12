@@ -35,6 +35,7 @@
                     dataFormWrapper: 'data-form-wrapper',
                     dataConfirmation: 'data-confirmation',
                     dataValidationSegment: 'data-validation',
+                    dataValidationRule: 'data-rule',
                     dataValidationCase: 'data-case',
                     dataSubmitTrigger: 'data-submit-trigger',
                     dataSubmitPending: 'data-submit-pending',
@@ -75,6 +76,7 @@
                 formWrapper = '[' + settings.dataFormWrapper + ']',
                 formConfirmation = '[' + settings.dataConfirmation + ']',
                 formValidationSegment = '[' + settings.dataValidationSegment + ']',
+                formValidationRule = '[' + settings.dataValidationRule + ']',
                 formValidationCase = '[' + settings.dataValidationCase + ']',
                 formSubmitTrigger = '[' + settings.dataSubmitTrigger + ']',
                 formSubmitPending = '[' + settings.dataSubmitPending + ']';
@@ -250,6 +252,13 @@
 
                 },
 
+                regex: function(element) {
+                    "use strict";
+                    var pattern = new RegExp(element.regex);
+                    console.log(element, pattern, element.value, pattern ? pattern.test(element.value) : true)
+                    return pattern ? pattern.test(element.value) : true;
+                },
+
                 test: function(elements, element) {
 
                     "use strict";
@@ -362,7 +371,8 @@
                                 rules: obj.data('validate'),
                                 isChecked: obj.is(':checked'),
                                 isVisible: obj.is(':visible'),
-                                isEditor: obj.hasClass('editor')
+                                isEditor: obj.hasClass('editor'),
+                                regex: obj.hasOwnProperty ? obj.data('rule') : null
                             };
 
                         if ( ! shouldInclude(element)) {
