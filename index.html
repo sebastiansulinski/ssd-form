@@ -16,19 +16,20 @@
 
 
 
-
+        <h3>Default validation rules</h3>
 
         <div data-form-wrapper>
 
             <form
-                    method="post"
-                    action="./submit.php"
-                    data-ajax-form
-                    data-success-behaviour="fadeOutShowMessage"
-                    novalidate
+                method="post"
+                action="./submit.php"
+                data-ajax-form
+                data-success-behaviour="fadeOutShowMessage"
+                novalidate
             >
 
                 <label for="title">
+                    Selected option must be <kbd>Mr</kbd>
                     <span data-validation="title">
                         <span data-case="required">Please select your title</span>
                         <span data-case="value_is">Selected value must be Mr</span>
@@ -48,6 +49,7 @@
                 </select>
 
                 <label for="first_name">
+                    Minimum length must be <kbd>3 characters</kbd>
                     <span data-validation="first_name">
                         <span data-case="required">Please provide your first name</span>
                         <span data-case="min">Length must be at least 3 characters</span>
@@ -56,14 +58,15 @@
                 </label>
 
                 <input
-                        type="text"
-                        name="first_name"
-                        id="first_name"
-                        data-validate="required|min:3"
-                        placeholder="Your first name *"
+                    type="text"
+                    name="first_name"
+                    id="first_name"
+                    data-validate="required|min:3"
+                    placeholder="Your first name *"
                 >
 
                 <label for="last_name">
+                    Minimum length must be <kbd>3 characters</kbd>
                     <span data-validation="last_name">
                         <span data-case="required">Please provide your last name</span>
                         <span data-case="min">Length must be at least 3 characters</span>
@@ -71,14 +74,15 @@
                 </label>
 
                 <input
-                        type="text"
-                        name="last_name"
-                        id="last_name"
-                        data-validate="required|min:3"
-                        placeholder="Your last name *"
+                    type="text"
+                    name="last_name"
+                    id="last_name"
+                    data-validate="required|min:3"
+                    placeholder="Your last name *"
                 >
 
                 <label for="email">
+                    Value must be a valid <kbd>email address</kbd>
                     <span data-validation="email">
                         <span data-case="required">Please provide your email address</span>
                         <span data-case="email">Invalid email address</span>
@@ -86,14 +90,15 @@
                 </label>
 
                 <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        data-validate="required|email"
-                        placeholder="Your email address *"
+                    type="email"
+                    name="email"
+                    id="email"
+                    data-validate="required|email"
+                    placeholder="Your email address *"
                 >
 
                 <label for="password">
+                    Value must be a <kbd>password matching regex</kbd> and confirmed
                     <span data-validation="password">
                         <span data-case="required">Please choose your password</span>
                         <span data-case="password">Length must be at least 6 characters, one capital letter and one number</span>
@@ -102,14 +107,15 @@
                 </label>
 
                 <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        data-validate="required|password|confirmed"
-                        placeholder="Password"
+                    type="password"
+                    name="password"
+                    id="password"
+                    data-validate="required|password|confirmed"
+                    placeholder="Password"
                 >
 
                 <label for="password_confirmation">
+                    Value must be a <kbd>password matching regex</kbd> and match password field
                     <span data-validation="password_confirmation">
                         <span data-case="required">Please confirm your password</span>
                         <span data-case="min">Length must be at least 5 characters</span>
@@ -117,14 +123,15 @@
                 </label>
 
                 <input
-                        type="password"
-                        name="password_confirmation"
-                        id="password_confirmation"
-                        data-validate="required|password"
-                        placeholder="Password"
+                    type="password"
+                    name="password_confirmation"
+                    id="password_confirmation"
+                    data-validate="required|password"
+                    placeholder="Confirm password"
                 >
 
                 <label>
+                    Checkbox must be checked
                     <span data-validation="terms">
                         <span data-case="checked">You must agree to our newsletter and conditions</span>
                     </span>
@@ -132,25 +139,25 @@
 
                 <label for="terms">
                     <input
-                            type="checkbox"
-                            name="terms"
-                            id="terms"
-                            data-validate="checked"
+                        type="checkbox"
+                        name="terms"
+                        id="terms"
+                        data-validate="checked"
                     > I agree to the terms and conditions
                 </label>
 
                 <input
-                        type="submit"
-                        class="button"
-                        value="SEND ENQUIRY"
-                        data-submit-trigger
+                    type="submit"
+                    class="button"
+                    value="SEND ENQUIRY"
+                    data-submit-trigger
                 >
 
                 <button
-                        type="button"
-                        class="button hide"
-                        disabled
-                        data-submit-pending
+                    type="button"
+                    class="button hide"
+                    disabled
+                    data-submit-pending
                 >
                     <i class="fa fa-spinner fa-spin"></i> PROCESSING
                 </button>
@@ -179,17 +186,18 @@
                 novalidate
             >
 
-                <label for="title">
-                    <span data-validation="title">
+                <label for="custom_title">
+                    Selected option must be <kbd>Mr</kbd>
+                    <span data-validation="custom_title">
                         <span data-case="required">Please select your title</span>
                         <span data-case="value_is">Selected value must be Mr</span>
                     </span>
                 </label>
 
                 <select
-                        data-field="title"
-                        id="custom_title"
-                        data-validate="required|value_is:1"
+                    data-field="custom_title"
+                    id="custom_title"
+                    data-validate="required|value_is:1"
                 >
                     <option value="">Select title</option>
                     <option value="1">Mr</option>
@@ -199,17 +207,69 @@
                 </select>
 
                 <input
-                        type="submit"
-                        class="button"
-                        value="SEND ENQUIRY"
-                        data-submit-trigger
+                    type="submit"
+                    class="button"
+                    value="SEND ENQUIRY"
+                    data-submit-trigger
                 >
 
                 <button
-                        type="button"
-                        class="button hide"
-                        disabled
-                        data-submit-pending
+                    type="button"
+                    class="button hide"
+                    disabled
+                    data-submit-pending
+                >
+                    <i class="fa fa-spinner fa-spin"></i> PROCESSING
+                </button>
+
+            </form>
+
+        </div>
+
+
+
+
+        <hr />
+
+        <h3>Custom regex</h3>
+
+        <div data-form-wrapper>
+
+            <form
+                method="post"
+                data-ajax-form
+                data-success-behaviour="reload"
+                novalidate
+            >
+
+                <label for="custom_regex">
+                    The string must contain <kbd>abc</kbd>
+                    <span data-validation="custom_regex">
+                        <span data-case="required">Please select your title</span>
+                        <span data-case="regex">Invalid format</span>
+                    </span>
+                </label>
+
+                <input
+                    type="text"
+                    name="custom_regex"
+                    id="custom_regex"
+                    data-validate="required|regex:abc"
+                    placeholder="ID number"
+                >
+
+                <input
+                    type="submit"
+                    class="button"
+                    value="SEND ENQUIRY"
+                    data-submit-trigger
+                >
+
+                <button
+                    type="button"
+                    class="button hide"
+                    disabled
+                    data-submit-pending
                 >
                     <i class="fa fa-spinner fa-spin"></i> PROCESSING
                 </button>

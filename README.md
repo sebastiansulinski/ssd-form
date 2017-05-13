@@ -242,6 +242,7 @@ data-validate="required|min:3"
 - `min:n` : input value's length must be minumum of `n` characters (`min:10` would mean that the value has to be at least 10 characters long)
 - `max:n` : input value's length must be maximum of `n` characters (`max:10` would mean that the value has to be maximum 10 characters long)
 - `confirmed` : input must have a matching input with the same name and `_confirmation` appended and both have to have the same value i.e `password`  and `password_confirmation`
+- `regex:n` : input must match the provided regex. Regex must NOT contain forward slashes `//`. Example: `regex:\w`
 
 ## Form submission
 

@@ -1,8 +1,8 @@
 /*
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
- * Copyright (c) 2016 Sebastian Sulinski
- * Version: 1.3.3 (30-MAR-2017)
+ * Copyright (c) 2017 Sebastian Sulinski
+ * Version: 1.4.0 (13-MAY-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -193,7 +193,7 @@
 
                     "use strict";
 
-                    return element.value == element.rules_collection;
+                    return element.value === element.rules_collection[0];
 
                 },
 
@@ -219,7 +219,7 @@
 
                     "use strict";
 
-                    return element.value.length >= element.rules_collection;
+                    return element.value.length >= element.rules_collection[0];
 
                 },
 
@@ -227,7 +227,7 @@
 
                     "use strict";
 
-                    return element.value.length <= element.rules_collection;
+                    return element.value.length <= element.rules_collection[0];
 
                 },
 
@@ -247,6 +247,16 @@
                     }
 
                     return confirmation.value === element.value;
+
+                },
+
+                regex: function(element) {
+
+                    "use strict";
+
+                    var regex = new RegExp(element.rules_collection[0]);
+
+                    return regex.test(element.value);
 
                 },
 
@@ -270,7 +280,7 @@
                             deferred.reject(rule);
                         }
 
-                        if ( (i + 1) == element.rules.length ) {
+                        if ( (i + 1) === element.rules.length ) {
                             deferred.resolve();
                         }
 
@@ -313,7 +323,7 @@
 
                     "use strict";
 
-                    if ( ( $.inArray('required', element.rules) === -1 ) && element.value == '') {
+                    if ( ( $.inArray('required', element.rules) === -1 ) && element.value === '') {
                         return true;
                     }
 
