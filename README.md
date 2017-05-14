@@ -12,7 +12,7 @@ npm i ssd-form
 
 ## Set up
 
-```
+```html
 <div data-form-wrapper>
 
     <form
@@ -159,13 +159,13 @@ npm i ssd-form
 
 Include the necessary styles for the plugin to work
 
-```
+```html
 <link href="assets/css/ssd-form.css" rel="stylesheet">
 ```
 
 To instantiate the form simply call it on the form
 
-```
+```javascript
 $(function() {
     $('form[data-ajax-form]').ssdForm();
 });
@@ -249,7 +249,7 @@ data-validate="required|min:3"
 Form will submit the input to the uri associated with its `action` attribute.
 If response is to return any errors it should return them as json in the following format:
 
-```
+```json
 {
     "first_name": "required",
     "email": "invalid"
@@ -278,7 +278,7 @@ Once the form has been processed successfully it will trigger one of the followi
 
 If you'd like to add more validation rules, use the `extendValidationRules` option, which will extend the internal `ValidationRules` object. Each new method takes the `element` argument. `element.rules_collection` represents any value that's after the rules colon i.e. `min:5` would return `5`, `something:5,6,7` would return `5,6,7`:
 
-```
+```javascript
 $('form[data-ajax-form]').ssdForm({
 
     extendValidationRules: {
@@ -333,7 +333,7 @@ isEditor
 
 For behaviours you do the same with `extendBehaviours` option, methods which take two arguments `form` (instance of the `FormModel` object) and `data` (ajax json response):
 
-```
+```javascript
 $('form[data-ajax-form]').ssdForm({
 
     extendBehaviours: {
@@ -367,7 +367,7 @@ This might be useful in situations where you might be sending request to the ext
 
 You can specify what field attribute should be used by overwriting the `serializeAttribute` property.
 
-```
+```html
 $('form[data-ajax-form]').ssdForm({
 
     serializeAttribute: 'data-field'
@@ -392,7 +392,7 @@ If you'd like to perform custom action once the form has been successfully valid
 - `success`: default success callback
 - `error`: default error callback
 
-```
+```javascript
 $('form[data-ajax-form]').ssdForm({
 
     actionMethod: function(form, form_model, success, error) {
