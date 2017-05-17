@@ -384,7 +384,7 @@
                             end(i, length, deferred);
                             return true;
                         } else {
-                            element.rules = element.rules.split('|');
+                            element.rules = element.rules.split('||');
                         }
 
                         $.when(validate(elements, element))
