@@ -36,6 +36,7 @@
                     dataConfirmation: 'data-confirmation',
                     dataValidationSegment: 'data-validation',
                     dataValidationCase: 'data-case',
+                    dataRegex: 'data-regex',
                     dataSubmitTrigger: 'data-submit-trigger',
                     dataSubmitPending: 'data-submit-pending',
 
@@ -77,6 +78,7 @@
                 formValidationSegment = '[' + settings.dataValidationSegment + ']',
                 formValidationCase = '[' + settings.dataValidationCase + ']',
                 formSubmitTrigger = '[' + settings.dataSubmitTrigger + ']',
+                formValidateRegex = '[' + settings.dataRegex + ']',
                 formSubmitPending = '[' + settings.dataSubmitPending + ']';
 
             var ErrorCollection = function() {
@@ -254,7 +256,7 @@
 
                     "use strict";
 
-                    var regex = new RegExp(element.rules_collection[0]);
+                    var regex = new RegExp(element.regex);
 
                     return regex.test(element.value);
 
@@ -372,7 +374,8 @@
                                 rules: obj.data('validate'),
                                 isChecked: obj.is(':checked'),
                                 isVisible: obj.is(':visible'),
-                                isEditor: obj.hasClass('editor')
+                                isEditor: obj.hasClass('editor'),
+                                regex: obj.data('regex')
                             };
 
                         if ( ! shouldInclude(element)) {
