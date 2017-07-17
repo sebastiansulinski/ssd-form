@@ -243,7 +243,7 @@
             >
 
                 <label for="custom_regex">
-                    The string must contain <kbd>abc</kbd>
+                    The string must contain <kbd>^[A-Z]$</kbd>
                     <span data-validation="custom_regex">
                         <span data-case="required">Please select your title</span>
                         <span data-case="regex">Invalid format</span>
@@ -254,7 +254,8 @@
                     type="text"
                     name="custom_regex"
                     id="custom_regex"
-                    data-validate="required|regex:abc"
+                    data-validate="required|regex"
+                    data-regex="^[A-Z]$"
                     placeholder="ID number"
                 >
 

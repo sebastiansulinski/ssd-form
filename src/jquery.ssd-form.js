@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2017 Sebastian Sulinski
- * Version: 1.4.0 (13-MAY-2017)
+ * Version: 1.4.1 (17-JULY-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
