@@ -194,6 +194,10 @@ dataSubmitTrigger: 'data-submit-trigger',
 // button that is shown when the form is being submitted (pending)
 dataSubmitPending: 'data-submit-pending',
 
+// class indicating that the given input's value
+// is to be fetched from CKEDITOR.instances
+classCkEditor: 'editor',
+
 // class that hides pending button
 classHide: 'hide',
 
@@ -404,4 +408,18 @@ $('form[data-ajax-form]').ssdForm({
     }
 
 });
+```
+
+## CKEDITOR field
+
+To fetch data from the CKEDITOR instance, please use the `classCkEditor` config option to specify what css class is representing input associated with te CKEDITOR instance. Input also has to have associated `id` attribute. You will have to bind CKEDITOR instance with the input yourself, but form will fetch the correct data on submit.
+
+```html
+$('form[data-ajax-form]').ssdForm({
+
+    classCkEditor: 'ckeditor'
+
+});
+
+<textarea class="ckeditor" id="body" name="body"></textarea>
 ```
