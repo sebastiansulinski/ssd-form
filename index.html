@@ -227,8 +227,6 @@
         </div>
 
 
-
-
         <hr />
 
         <h3>Custom regex</h3>
@@ -243,7 +241,7 @@
             >
 
                 <label for="custom_regex">
-                    The string must contain <kbd>^[A-Z]$</kbd>
+                    The string must contain only capital letters <kbd>^[A-Z]+$</kbd>
                     <span data-validation="custom_regex">
                         <span data-case="required">Please select your title</span>
                         <span data-case="regex">Invalid format</span>
@@ -255,9 +253,59 @@
                     name="custom_regex"
                     id="custom_regex"
                     data-validate="required|regex"
-                    data-regex="^[A-Z]$"
+                    data-regex="^[A-Z]+$"
                     placeholder="ID number"
                 >
+
+                <input
+                    type="submit"
+                    class="button"
+                    value="SEND ENQUIRY"
+                    data-submit-trigger
+                >
+
+                <button
+                    type="button"
+                    class="button hide"
+                    disabled
+                    data-submit-pending
+                >
+                    <i class="fa fa-spinner fa-spin"></i> PROCESSING
+                </button>
+
+            </form>
+
+        </div>
+
+        <hr />
+
+        <h3>CKEDITOR</h3>
+
+        <div data-form-wrapper>
+
+            <form
+                method="post"
+                data-ajax-form
+                data-success-behaviour="reload"
+                novalidate
+            >
+
+                <label for="body">
+                    Please provide a body
+                    <span data-validation="body">
+                        <span data-case="required">Please provide a body</span>
+                    </span>
+                </label>
+
+                <textarea
+                    name="body"
+                    id="body"
+                    data-validate="required"
+                    placeholder="Body"
+                    class="editor"
+                ></textarea>
+
+                <br />
 
                 <input
                     type="submit"
@@ -287,9 +335,15 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
 <script src="./src/jquery.ssd-form.js"></script>
 <script>
     $(function() {
+
+        $('.editor').each(function() {
+            window.CKEDITOR.replace($(this).attr('id'));
+        });
+
         $('form[data-ajax-form]').ssdForm();
         $('form[data-custom-form]').ssdForm({
             serializeAttribute: 'data-field',

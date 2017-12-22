@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2017 Sebastian Sulinski
- * Version: 1.4.1 (17-JULY-2017)
+ * Version: 1.5.0 (22-DEC-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -36,10 +36,10 @@
                     dataConfirmation: 'data-confirmation',
                     dataValidationSegment: 'data-validation',
                     dataValidationCase: 'data-case',
-                    dataRegex: 'data-regex',
                     dataSubmitTrigger: 'data-submit-trigger',
                     dataSubmitPending: 'data-submit-pending',
 
+                    classCkEditor: 'editor',
                     classHide: 'hide',
 
                     classShow: 'show',
@@ -56,7 +56,7 @@
 
                     ignoreElements: '.button, [disabled]',
 
-                    serializeAttribute: null,
+                    serializeAttribute: 'name',
 
                     actionMethod: function(form, form_model, success, error) {
 
@@ -78,7 +78,6 @@
                 formValidationSegment = '[' + settings.dataValidationSegment + ']',
                 formValidationCase = '[' + settings.dataValidationCase + ']',
                 formSubmitTrigger = '[' + settings.dataSubmitTrigger + ']',
-                formValidateRegex = '[' + settings.dataRegex + ']',
                 formSubmitPending = '[' + settings.dataSubmitPending + ']';
 
             var ErrorCollection = function() {
@@ -238,11 +237,11 @@
                     "use strict";
 
                     var confirmation_field = element.name + '_confirmation',
-                        confirmation = this.elements.filter(function (i, v) {
-                            return v.name === confirmation_field;
+                        confirmation = this.elements.filter(function (el) {
+                            return el.name === confirmation_field;
                         })[0];
 
-                    if (confirmation.length === 0) {
+                    if (!confirmation) {
 
                         throw new Error(element.name + '_confirmation' + ' field is missing');
 
@@ -257,7 +256,7 @@
                     "use strict";
 
                     var regex = new RegExp(element.regex);
-
+                    console.log(regex);
                     return regex.test(element.value);
 
                 },
@@ -266,23 +265,23 @@
 
                     "use strict";
 
-                    var self = this,
+                    var $this = this,
                         deferred = $.Deferred();
 
-                    self.elements = elements;
+                    $this.elements = elements;
 
-                    $.each(element.rules, function(i, v) {
+                    $.each(element.rules, function(index, rules) {
 
-                        var split = v.split(':'),
+                        var split = rules.split(':'),
                             rule = split.shift();
 
                         element.rules_collection = split;
 
-                        if ( ! self[rule](element)) {
+                        if ( ! $this[rule](element)) {
                             deferred.reject(rule);
                         }
 
-                        if ( (i + 1) === element.rules.length ) {
+                        if ( (index + 1) === element.rules.length ) {
                             deferred.resolve();
                         }
 
@@ -357,46 +356,33 @@
 
                     "use strict";
 
-                    var elements = form_model.inputs(),
+                    var elements = form_model.data(),
                         length = elements.length,
                         deferred = $.Deferred();
 
-                    $.each(elements, function(i, v) {
+                    $.each(elements, function(index, element) {
 
-                        var obj = $(this),
-                            element = {
-                                instance: obj,
-                                name: settings.serializeAttribute === null ?
-                                    obj.prop('name') :
-                                    obj.attr(settings.serializeAttribute),
-                                type: obj.prop('type'),
-                                value: obj.prop('value'),
-                                rules: obj.data('validate'),
-                                isChecked: obj.is(':checked'),
-                                isVisible: obj.is(':visible'),
-                                isEditor: obj.hasClass('editor'),
-                                regex: obj.data('regex')
-                            };
+                        var $this = $(this);
 
                         if ( ! shouldInclude(element)) {
-                            end(i, length, deferred);
+                            end(index, length, deferred);
                             return true;
                         }
 
                         if ( element.rules === undefined || element.rules.length === 0 ) {
-                            end(i, length, deferred);
+                            end(index, length, deferred);
                             return true;
-                        } else {
-                            element.rules = element.rules.split('|');
                         }
+
+                        element.rules = element.rules.split('|');
 
                         $.when(validate(elements, element))
                             .done(function() {
-                                end(i, length, deferred);
+                                end(index, length, deferred);
                             })
                             .fail(function(rule) {
                                 error.add(element.name, rule);
-                                end(i, length, deferred);
+                                end(index, length, deferred);
                             });
 
                     });
@@ -566,13 +552,10 @@
 
                 var inputs = form.find(':input').not(settings.ignoreElements),
                     options = {
-                        method : form.prop('method'),
-                        action : form.prop('action'),
-                        successBehaviour : form.data('success-behaviour'),
-                        inputs: inputs,
-                        data : settings.serializeAttribute === null ?
-                                form.serializeArray() :
-                                serialize()
+                        method: form.prop('method'),
+                        action: form.prop('action'),
+                        successBehaviour: form.data('success-behaviour'),
+                        data: serialize()
                     },
                     validator,
                     error;
@@ -585,12 +568,23 @@
 
                     inputs.each(function() {
 
-                        var name = $(this).attr(settings.serializeAttribute),
-                            value = $(this).val();
+                        var $this = $(this),
+                            name = $this.attr(settings.serializeAttribute),
+                            value = $this.val();
+
+                        if ($this.hasClass(settings.classCkEditor)) {
+                            value = window.CKEDITOR.instances[$this.attr('id')].getData();
+                        }
 
                         serializedArray.push({
                             name: name,
-                            value: value
+                            value: value,
+                            type: $this.prop('type'),
+                            rules: $this.data('validate'),
+                            isChecked: $this.is(':checked'),
+                            isVisible: $this.is(':visible'),
+                            isEditor: $this.hasClass('editor'),
+                            regex: $this.data('regex')
                         });
 
                     });
@@ -651,14 +645,6 @@
 
                 };
 
-                this.inputs = function() {
-
-                    "use strict";
-
-                    return options.inputs;
-
-                };
-
                 this.data = function() {
 
                     "use strict";
@@ -671,7 +657,7 @@
 
                     "use strict";
 
-                    error = new ErrorCollection();
+                    error = new ErrorCollection;
                     validator = new Validator(this, error);
 
                     return validator.run();
@@ -814,14 +800,14 @@
 
                     "use strict";
 
-                    var self = this;
+                    var $this = this;
 
                     $.when(form_model.validate())
                         .done(function(data, textStatus, jqXHR) {
 
-                            self.beginRequest(form_model);
+                            $this.beginRequest(form_model);
 
-                            settings.actionMethod(self, form_model, success, error);
+                            settings.actionMethod($this, form_model, success, error);
 
                         })
                         .fail(fail);
@@ -832,7 +818,7 @@
 
                     "use strict";
 
-                    var self = this;
+                    var $this = this;
 
                     $(instance).on('submit', function(event) {
 
@@ -840,21 +826,21 @@
 
                         var form_model = new FormModel($(this));
 
-                        self.clearErrors(form_model);
+                        $this.clearErrors(form_model);
 
-                        self.formAction(
+                        $this.formAction(
                             form_model,
                             function(data) {
 
                                 settings.postAjaxSuccess(
-                                    self, form_model, data
+                                    $this, form_model, data
                                 );
 
                             },
                             function(jqXHR, textStatus, errorThrown) {
 
                                 settings.postAjaxFailure(
-                                    self,
+                                    $this,
                                     form_model,
                                     jqXHR,
                                     textStatus,
@@ -864,7 +850,7 @@
                             },
                             function(errors) {
 
-                                self.endRequestDisplayErrors(form_model, errors);
+                                $this.endRequestDisplayErrors(form_model, errors);
 
                             }
                         );
