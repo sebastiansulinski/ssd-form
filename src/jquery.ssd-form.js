@@ -363,7 +363,7 @@
 
                     "use strict";
 
-                    var elements = form_model.data(),
+                    var elements = form_model.inputs(),
                         length = elements.length,
                         deferred = $.Deferred();
 
@@ -555,24 +555,20 @@
 
                 "use strict";
 
-                var inputs = form.find(':input').not(settings.ignoreElements),
-                    options = {
-                        method: form.prop('method'),
-                        action: form.prop('action'),
-                        successBehaviour: form.data('success-behaviour'),
-                        data: serialize()
-                    },
-                    validator,
-                    error;
+                var data = form.serializeArray(),
+                    inputs = serialize(form.find(':input').not(settings.ignoreElements)),
+                    method = form.prop('method'),
+                    action = form.prop('action'),
+                    successBehaviour = form.data('success-behaviour');
 
-                function serialize() {
+                function serialize(elements) {
 
                     "use strict";
 
                     var serializedArray = [],
                         radios = [];
 
-                    inputs.each(function(index, element) {
+                    elements.each(function(index, element) {
 
                         var $this = $(element),
                             params = {
@@ -609,6 +605,9 @@
 
                         }
 
+                        // todo
+                        // case for arrays category[]
+
                         serializedArray.push(params);
 
                     });
@@ -621,13 +620,13 @@
 
                     "use strict";
 
-                    if (options.method === undefined) {
+                    if (method === undefined) {
 
-                        options.method = 'post';
+                        method = 'post';
 
                     }
 
-                    if (options.action === undefined) {
+                    if (action === undefined) {
 
                         throw new Error('No action defined.');
 
@@ -649,7 +648,7 @@
 
                     "use strict";
 
-                    return options.method;
+                    return method;
 
                 };
 
@@ -657,7 +656,7 @@
 
                     "use strict";
 
-                    return options.action;
+                    return action;
 
                 };
 
@@ -665,7 +664,15 @@
 
                     "use strict";
 
-                    return options.successBehaviour;
+                    return successBehaviour;
+
+                };
+
+                this.inputs = function() {
+
+                    "use strict";
+
+                    return inputs;
 
                 };
 
@@ -673,7 +680,7 @@
 
                     "use strict";
 
-                    return options.data;
+                    return data;
 
                 };
 
@@ -681,10 +688,7 @@
 
                     "use strict";
 
-                    error = new ErrorCollection;
-                    validator = new Validator(this, error);
-
-                    return validator.run();
+                    return (new Validator(this, new ErrorCollection)).run();
 
                 };
 

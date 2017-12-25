@@ -130,22 +130,47 @@
                     placeholder="Confirm password"
                 >
 
-                <label>
-                    One option must be selected
-                    <span data-validation="delivery">
-                        <span data-case="radio">You must select one option</span>
-                    </span>
-                </label>
+                <div class="primary callout">
 
-                <label for="delivery-1">
-                    <input type="radio" name="delivery" id="delivery-1" value="1" data-validate="radio"> Option 1
-                </label>
-                <label for="delivery-2">
-                    <input type="radio" name="delivery" id="delivery-2" value="2"> Option 2
-                </label>
-                <label for="delivery-3">
-                    <input type="radio" name="delivery" id="delivery-3" value="3"> Option 3
-                </label>
+                    <label>
+                        One option must be selected
+                        <span data-validation="delivery">
+                            <span data-case="radio">You must select one option</span>
+                        </span>
+                    </label>
+
+                    <label for="delivery-1">
+                        <input type="radio" name="delivery" id="delivery-1" value="1" data-validate="radio"> Option 1
+                    </label>
+                    <label for="delivery-2">
+                        <input type="radio" name="delivery" id="delivery-2" value="2"> Option 2
+                    </label>
+                    <label for="delivery-3">
+                        <input type="radio" name="delivery" id="delivery-3" value="3"> Option 3
+                    </label>
+
+                </div>
+
+                <div class="secondary callout">
+
+                    <label>
+                        At least one option must be selected
+                        <span data-validation="category">
+                            <span data-case="required">You must select at least one option</span>
+                        </span>
+                    </label>
+
+                    <label for="category-1">
+                        <input type="checkbox" name="category[]" id="category-1" value="1" data-validate="required"> Option 1
+                    </label>
+                    <label for="category-2">
+                        <input type="checkbox" name="category[]" id="category-2" value="2"> Option 2
+                    </label>
+                    <label for="category-3">
+                        <input type="checkbox" name="category[]" id="category-3" value="3"> Option 3
+                    </label>
+
+                </div>
 
                 <label>
                     Checkbox must be checked
