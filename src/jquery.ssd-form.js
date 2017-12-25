@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2017 Sebastian Sulinski
- * Version: 1.5.1 (25-DEC-2017)
+ * Version: 1.5.2 (25-DEC-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -190,6 +190,13 @@
 
                 },
 
+                radio: function(element) {
+
+                    "use strict";
+
+                    return this.checked(element);
+                },
+
                 value_is: function(element) {
 
                     "use strict";
@@ -256,7 +263,7 @@
                     "use strict";
 
                     var regex = new RegExp(element.regex);
-                    console.log(regex);
+
                     return regex.test(element.value);
 
                 },
@@ -361,8 +368,6 @@
                         deferred = $.Deferred();
 
                     $.each(elements, function(index, element) {
-
-                        var $this = $(this);
 
                         if ( ! shouldInclude(element)) {
                             end(index, length, deferred);
@@ -564,28 +569,47 @@
 
                     "use strict";
 
-                    var serializedArray = [];
+                    var serializedArray = [],
+                        radios = [];
 
-                    inputs.each(function() {
+                    inputs.each(function(index, element) {
 
-                        var $this = $(this),
-                            name = $this.attr(settings.serializeAttribute),
-                            value = $this.val();
+                        var $this = $(element),
+                            params = {
+                                name: $this.attr(settings.serializeAttribute),
+                                type: element.type,
+                                rules: $this.data('validate'),
+                                isChecked: $this.is(':checked'),
+                                isVisible: $this.is(':visible'),
+                                isEditor: $this.hasClass('editor'),
+                                regex: $this.data('regex')
+                            };
 
                         if ($this.hasClass(settings.classCkEditor)) {
-                            value = window.CKEDITOR.instances[$this.attr('id')].getData();
+                            params.value = window.CKEDITOR.instances[$this.attr('id')].getData();
+                        } else {
+                            params.value = $this.val();
                         }
 
-                        serializedArray.push({
-                            name: name,
-                            value: value,
-                            type: $this.prop('type'),
-                            rules: $this.data('validate'),
-                            isChecked: $this.is(':checked'),
-                            isVisible: $this.is(':visible'),
-                            isEditor: $this.hasClass('editor'),
-                            regex: $this.data('regex')
-                        });
+                        if (params.type === 'radio') {
+
+                            if (radios[params.name]) {
+
+                                if (!params.isChecked) {
+                                    return;
+                                }
+
+                                params.rules = serializedArray[radios[params.name]].rules;
+                                serializedArray.splice(radios[params.name], 1, params);
+                                return;
+
+                            }
+
+                            radios[params.name] = index;
+
+                        }
+
+                        serializedArray.push(params);
 
                     });
 
@@ -704,7 +728,7 @@
 
                         if (errors.hasOwnProperty(key)) {
 
-                            if (key == 'alert') {
+                            if (key === 'alert') {
 
                                 this.displayAlert(errors[key]);
 

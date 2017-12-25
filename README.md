@@ -16,11 +16,11 @@ npm i ssd-form
 <div data-form-wrapper>
 
     <form
-            method="post"
-            action="./submit.php"
-            data-ajax-form
-            data-success-behaviour="fadeOutShowMessage"
-            novalidate
+        method="post"
+        action="./submit.php"
+        data-ajax-form
+        data-success-behaviour="fadeOutShowMessage"
+        novalidate
     >
 
         <label for="title">
@@ -51,11 +51,11 @@ npm i ssd-form
         </label>
 
         <input
-                type="text"
-                name="first_name"
-                id="first_name"
-                data-validate="required|min:3"
-                placeholder="Your first name *"
+            type="text"
+            name="first_name"
+            id="first_name"
+            data-validate="required|min:3"
+            placeholder="Your first name *"
         >
 
         <label for="last_name">
@@ -66,11 +66,11 @@ npm i ssd-form
         </label>
 
         <input
-                type="text"
-                name="last_name"
-                id="last_name"
-                data-validate="required|min:3"
-                placeholder="Your last name *"
+            type="text"
+            name="last_name"
+            id="last_name"
+            data-validate="required|min:3"
+            placeholder="Your last name *"
         >
 
         <label for="email">
@@ -81,11 +81,11 @@ npm i ssd-form
         </label>
 
         <input
-                type="email"
-                name="email"
-                id="email"
-                data-validate="required|email"
-                placeholder="Your email address *"
+            type="email"
+            name="email"
+            id="email"
+            data-validate="required|email"
+            placeholder="Your email address *"
         >
 
         <label for="password">
@@ -97,11 +97,11 @@ npm i ssd-form
         </label>
 
         <input
-                type="password"
-                name="password"
-                id="password"
-                data-validate="required|password|confirmed"
-                placeholder="Password"
+            type="password"
+            name="password"
+            id="password"
+            data-validate="required|password|confirmed"
+            placeholder="Password"
         >
 
         <label for="password_confirmation">
@@ -112,12 +112,29 @@ npm i ssd-form
         </label>
 
         <input
-                type="password"
-                name="password_confirmation"
-                id="password_confirmation"
-                data-validate="required|password"
-                placeholder="Password"
+            type="password"
+            name="password_confirmation"
+            id="password_confirmation"
+            data-validate="required|password"
+            placeholder="Password"
         >
+        
+        <label>
+            Please select delivery option
+            <span data-validation="delivery">
+                <span data-case="radio">You must select one option</span>
+            </span>
+        </label>
+
+        <label for="delivery-1">
+            <input type="radio" name="delivery" id="delivery-1" value="1" data-validate="radio"> Option 1
+        </label>
+        <label for="delivery-2">
+            <input type="radio" name="delivery" id="delivery-2" value="2"> Option 2
+        </label>
+        <label for="delivery-3">
+            <input type="radio" name="delivery" id="delivery-3" value="3"> Option 3
+        </label>
 
         <label>
             <span data-validation="terms">
@@ -127,10 +144,10 @@ npm i ssd-form
 
         <label for="terms">
             <input
-                    type="checkbox"
-                    name="terms"
-                    id="terms"
-                    data-validate="checked"
+                type="checkbox"
+                name="terms"
+                id="terms"
+                data-validate="checked"
             > I agree to the terms and conditions
         </label>
 
@@ -240,6 +257,7 @@ data-validate="required|min:3"
 
 - `required` : input must have a value
 - `checked` : input must be checked
+- `radio` : input of type `radio` must have one option selected
 - `value_is:n` : input value must equal `n` (`value:10` would mean that value must equal 10)
 - `email` : input value must be a valid email address - regex /^[a-zA-Z0-9._\-]+@[a-zA-Z0-9]+([.\-]?[a-zA-Z0-9]+)?([\.]{1}[a-zA-Z]{2,4}){1,4}$/
 - `password` : input value must match the following regex `/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/`
