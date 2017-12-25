@@ -260,6 +260,12 @@
                     return regex.test(element.value);
 
                 },
+                
+                selected: function(element){
+                    "use strict";
+
+                    return $('input[name=' + element.name + ']:checked').length > 0
+                },
 
                 test: function(elements, element) {
 
