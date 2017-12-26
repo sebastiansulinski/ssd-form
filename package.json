@@ -1,6 +1,6 @@
 {
   "name": "ssd-form",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "jQuery plugin to handle form validation and submission",
   "main": "src/jquery.ssd-form.js",
   "scripts": {
