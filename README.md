@@ -141,6 +141,44 @@ npm i ssd-form
                 <span data-case="checked">You must agree to our newsletter and conditions</span>
             </span>
         </label>
+        
+        
+        <label>
+            At least one option must be selected
+            <span data-validation="category">
+                <span data-case="min">You must select at least one option</span>
+            </span>
+        </label>
+
+        <label for="category-1">
+            <input type="checkbox" name="category[]" id="category-1" value="1" data-validate="min:1"> Option 1
+        </label>
+        <label for="category-2">
+            <input type="checkbox" name="category[]" id="category-2" value="2"> Option 2
+        </label>
+        <label for="category-3">
+            <input type="checkbox" name="category[]" id="category-3" value="3"> Option 3
+        </label>
+        
+
+        <label>
+            Exactly one option must be selected
+            <span data-validation="type">
+                <span data-case="min">You must select exactly one option</span>
+                <span data-case="max">You must select exactly one option</span>
+            </span>
+        </label>
+
+        <label for="type-1">
+            <input type="checkbox" name="type[]" id="type-1" value="1" data-validate="min:1|max:1"> Option 1
+        </label>
+        <label for="type-2">
+            <input type="checkbox" name="type[]" id="type-2" value="2"> Option 2
+        </label>
+        <label for="type-3">
+            <input type="checkbox" name="type[]" id="type-3" value="3"> Option 3
+        </label>
+        
 
         <label for="terms">
             <input
@@ -152,17 +190,17 @@ npm i ssd-form
         </label>
 
         <input
-                type="submit"
-                class="button"
-                value="SEND ENQUIRY"
-                data-submit-trigger
+            type="submit"
+            class="button"
+            value="SEND ENQUIRY"
+            data-submit-trigger
         >
 
         <button
-                type="button"
-                class="button hide"
-                disabled
-                data-submit-pending
+            type="button"
+            class="button hide"
+            disabled
+            data-submit-pending
         >
             <i class="fa fa-spinner fa-spin"></i> PROCESSING
         </button>
@@ -261,10 +299,10 @@ data-validate="required|min:3"
 - `value_is:n` : input value must equal `n` (`value:10` would mean that value must equal 10)
 - `email` : input value must be a valid email address - regex /^[a-zA-Z0-9._\-]+@[a-zA-Z0-9]+([.\-]?[a-zA-Z0-9]+)?([\.]{1}[a-zA-Z]{2,4}){1,4}$/
 - `password` : input value must match the following regex `/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/`
-- `min:n` : input value's length must be minumum of `n` characters (`min:10` would mean that the value has to be at least 10 characters long)
-- `max:n` : input value's length must be maximum of `n` characters (`max:10` would mean that the value has to be maximum 10 characters long)
+- `min:n` : input value's length must be minimum of `n` characters (or for array types - number of items in array). i.e. `min:10` would mean that the value has to be at least 10 characters long / array has to have at least 10 items
+- `max:n` : input value's length must be maximum of `n` characters (or for array types - number of items in array). i.e. `max:10` would mean that the value has to be maximum 10 characters long / array must not have more than 10 items
 - `confirmed` : input must have a matching input with the same name and `_confirmation` appended and both have to have the same value i.e `password`  and `password_confirmation`
-- `regex` : input must match the regex associated with `data-regex`.
+- `regex` : input must match the regex associated with `data-regex`
 
 ## Form submission
 
@@ -327,9 +365,6 @@ $('form[data-ajax-form]').ssdForm({
 Other options available on the `element` object:
 
 ```
-// instance of the input
-instance,
-
 // name attribute
 name,
 
@@ -342,6 +377,10 @@ value,
 // validation rules associated with the data-validate attribute
 rules: obj.data('validate'),
 
+// returns true if element name is of the array type
+// i.e. name="category[]"
+isArray,
+
 // returns true if checkbox / radio button is checked
 isChecked,
 
@@ -350,7 +389,10 @@ isVisible,
 
 // returns true if given input has class 'editor' associated with it
 // this option is useful if you're using wysiwyg editor etc.
-isEditor
+isEditor,
+
+// returns associated regex rule
+regex
 ```
 
 For behaviours you do the same with `extendBehaviours` option, methods which take two arguments `form` (instance of the `FormModel` object) and `data` (ajax json response):
