@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2017 Sebastian Sulinski
- * Version: 1.5.2 (25-DEC-2017)
+ * Version: 1.5.3 (26-DEC-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -566,15 +566,18 @@
                     "use strict";
 
                     var serializedArray = [],
+                        arrays = [],
                         radios = [];
 
                     elements.each(function(index, element) {
 
                         var $this = $(element),
+                            fullName = $this.attr(settings.serializeAttribute).split('['),
                             params = {
-                                name: $this.attr(settings.serializeAttribute),
+                                name: fullName[0],
                                 type: element.type,
                                 rules: $this.data('validate'),
+                                isArray: fullName.length > 1,
                                 isChecked: $this.is(':checked'),
                                 isVisible: $this.is(':visible'),
                                 isEditor: $this.hasClass('editor'),
@@ -601,12 +604,32 @@
 
                             }
 
-                            radios[params.name] = index;
+                            radios[params.name] = serializedArray.length;
 
                         }
 
-                        // todo
-                        // case for arrays category[]
+                        if (params.isArray) {
+
+                            if (arrays[params.name]) {
+
+                                if (params.type === 'checkbox' && !params.isChecked) {
+                                    return;
+                                }
+
+                                serializedArray[arrays[params.name]].value.push(params.value);
+                                return;
+
+                            } else {
+
+                                params.value = [params.value];
+
+                                if (params.type === 'checkbox' && !params.isChecked) {
+                                    params.value = [];
+                                }
+
+                                arrays[params.name] = serializedArray.length;
+                            }
+                        }
 
                         serializedArray.push(params);
 

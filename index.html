@@ -156,18 +156,40 @@
                     <label>
                         At least one option must be selected
                         <span data-validation="category">
-                            <span data-case="required">You must select at least one option</span>
+                            <span data-case="min">You must select at least one option</span>
                         </span>
                     </label>
 
                     <label for="category-1">
-                        <input type="checkbox" name="category[]" id="category-1" value="1" data-validate="required"> Option 1
+                        <input type="checkbox" name="category[]" id="category-1" value="1" data-validate="min:1"> Option 1
                     </label>
                     <label for="category-2">
                         <input type="checkbox" name="category[]" id="category-2" value="2"> Option 2
                     </label>
                     <label for="category-3">
                         <input type="checkbox" name="category[]" id="category-3" value="3"> Option 3
+                    </label>
+
+                </div>
+
+                <div class="secondary callout">
+
+                    <label>
+                        Exactly one option must be selected
+                        <span data-validation="type">
+                            <span data-case="min">You must select exactly one option</span>
+                            <span data-case="max">You must select exactly one option</span>
+                        </span>
+                    </label>
+
+                    <label for="type-1">
+                        <input type="checkbox" name="type[]" id="type-1" value="1" data-validate="min:1|max:1"> Option 1
+                    </label>
+                    <label for="type-2">
+                        <input type="checkbox" name="type[]" id="type-2" value="2"> Option 2
+                    </label>
+                    <label for="type-3">
+                        <input type="checkbox" name="type[]" id="type-3" value="3"> Option 3
                     </label>
 
                 </div>
