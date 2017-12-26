@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2017 Sebastian Sulinski
- * Version: 1.5.3 (26-DEC-2017)
+ * Version: 1.5.4 (26-DEC-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -572,7 +572,13 @@
                     elements.each(function(index, element) {
 
                         var $this = $(element),
-                            fullName = $this.attr(settings.serializeAttribute).split('['),
+                            nameAttribute = $this.attr(settings.serializeAttribute);
+
+                        if (!nameAttribute) {
+                            return;
+                        }
+
+                        var fullName = nameAttribute.split('['),
                             params = {
                                 name: fullName[0],
                                 type: element.type,
