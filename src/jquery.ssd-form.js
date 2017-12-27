@@ -2,7 +2,7 @@
  * ssdForm jQuery plugin
  * Examples and documentation at: https://github.com/sebastiansulinski/ssd-form
  * Copyright (c) 2017 Sebastian Sulinski
- * Version: 1.5.4 (26-DEC-2017)
+ * Version: 1.5.5 (27-DEC-2017)
  * Licensed under the MIT.
  * Requires: jQuery v1.9 or later
  */
@@ -579,6 +579,7 @@
                         }
 
                         var fullName = nameAttribute.split('['),
+                            id = $this.attr('id'),
                             params = {
                                 name: fullName[0],
                                 type: element.type,
@@ -591,7 +592,8 @@
                             };
 
                         if ($this.hasClass(settings.classCkEditor)) {
-                            params.value = window.CKEDITOR.instances[$this.attr('id')].getData();
+                            params.value = window.CKEDITOR.instances[id].getData();
+                            replaceCkEditor(id, params.value);
                         } else {
                             params.value = $this.val();
                         }
@@ -643,6 +645,14 @@
 
                     return serializedArray;
 
+                }
+
+                function replaceCkEditor(name, value) {
+                    $.each(data, function(index, item) {
+                        if (item.name === name) {
+                            data[index].value = value;
+                        }
+                    });
                 }
 
                 function validateOptions() {
