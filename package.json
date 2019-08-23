@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/sebastiansulinski/ssd-form#readme",
   "dependencies": {
-    "jquery": ">= 1.9"
+    "jquery": "^3.4.1"
   }
 }
